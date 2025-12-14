@@ -9,6 +9,7 @@ TagManager:
   - Destroyer
   - MiniWorldCamera
   - Water
+  - FollowTarget
   layers:
   - Default
   - TransparentFX
