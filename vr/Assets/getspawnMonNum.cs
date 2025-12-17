@@ -8,7 +8,7 @@ public class getspawnMonNum : MonoBehaviour
 {
     public Spawn Spawnnum;
     public TextMeshProUGUI scoreText;
-    private int Spawnnumm = 1;
+    private int Spawnnumm = 2;
     // Start is called before the first frame update
     void Start()
     {
