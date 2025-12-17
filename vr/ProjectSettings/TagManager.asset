@@ -10,6 +10,7 @@ TagManager:
   - MiniWorldCamera
   - Water
   - FollowTarget
+  - monster
   layers:
   - Default
   - TransparentFX

@@ -7,7 +7,8 @@ public class monster : MonoBehaviour
     public GameObject targetObject;
     public float targetTime = 1f;
     private bool isRagdollEnabled = false;
-    public int health = 2;
+    [SerializeField]private float health = 100;
+    
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class monster : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        waitTillRagdoll();
+        
     }
 
     private void DisableRagdoll() {
@@ -42,12 +43,19 @@ public class monster : MonoBehaviour
         isRagdollEnabled = true;
     }
 
-    private void waitTillRagdoll() {
-        targetTime -= Time.deltaTime;
-        if (targetTime < 0)
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        if (health <= 0 && !isRagdollEnabled)
         {
             EnableRagdoll();
+
+
+            Destroy(targetObject, 5f);
         }
     }
+
+
 
 }
