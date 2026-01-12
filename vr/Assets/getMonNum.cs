@@ -6,7 +6,7 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class getMonNum : MonoBehaviour
 {
-    public co monsterdamage;
+    public Co monsterdamage;
     public TextMeshProUGUI scoreText;
     private int damage = 0;
     // Start is called before the first frame update
@@ -24,7 +24,7 @@ public class getMonNum : MonoBehaviour
     private void getspawn() {
 
 
-        damage = monsterdamage.Totaldamage;
+        damage = monsterdamage.totalDamage;
     }
 
     private void UpdateScoreText()

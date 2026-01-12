@@ -1,42 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class co : MonoBehaviour
+public class Co : MonoBehaviour  // Better to use PascalCase for class names
 {
     public int damages = 10;
-    public int Totaldamage = 0;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-        private void OnCollisionEnter(Collision collision)
-    {
-       // Debug.Log("Collided with " + collision.gameObject.name);
-    }
+    public int totalDamage = 0;
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("Triggered by " + other.gameObject.name);
+
         if (other.gameObject.CompareTag("monster"))
         {
-            monster monsterScript = other.gameObject.GetComponent<monster>();
+            Monster monsterScript = other.gameObject.GetComponent<Monster>();
 
-            
-                monsterScript.TakeDamage(damages); // Inflict 50 damage on the monster
+            if (monsterScript != null)
+            {
+                monsterScript.TakeDamage(damages); // Inflict damage on the monster
+                totalDamage = totalDamage + damages;
 
-            Totaldamage = Totaldamage + damages;
-
-
-
+                // Self-contained: Optional - Destroy this object after hitting monster
+                // Destroy(gameObject);
+            }
         }
     }
 }

@@ -4,8 +4,8 @@ using System.Collections;
 public class Spawn : MonoBehaviour
 {
     public GameObject item;
-    public float rate = 0.5f;
-    public int maxItems = 10;
+    public float rate = 10f;
+    public int maxItems = 1;
     public int currentItems = 0;
 
     void Start()
