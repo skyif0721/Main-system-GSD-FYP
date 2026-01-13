@@ -7,6 +7,7 @@ public class enanle : MonoBehaviour
     // Start is called before the first frame update
     public GameObject objectToToggle;
 
+
     void Start()
     {
        
@@ -15,7 +16,7 @@ public class enanle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+   
     }
 
     public void EnableObject()
@@ -25,4 +26,6 @@ public class enanle : MonoBehaviour
             objectToToggle.SetActive(true);
         }
     }
+
+
 }

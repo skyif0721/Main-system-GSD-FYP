@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Monster : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class Monster : MonoBehaviour
     [SerializeField] private int health = 100;
     public int healthtemp = 0;
     public static Monster Instance;
+    public int deadCount = 0;
 
 
     // Self-contained timer for destruction
@@ -76,6 +78,7 @@ public class Monster : MonoBehaviour
         // Self-contained death handling
         EnableRagdoll();
         isDead = true;
+        deadCount += 1;
 
         // Start self-destruction
         deathTimer = 10f;

@@ -6,7 +6,7 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class getspawnMonNum : MonoBehaviour
 {
-    public Spawn Spawnnum;
+    public Monster Monster;
     public TextMeshProUGUI scoreText;
     private int Spawnnumm = 2;
     // Start is called before the first frame update
@@ -24,7 +24,7 @@ public class getspawnMonNum : MonoBehaviour
     private void getspawn() {
 
 
-        Spawnnumm = Spawnnum.currentItems;
+        Spawnnumm = Monster.deadCount;
     }
 
     private void UpdateScoreText()
