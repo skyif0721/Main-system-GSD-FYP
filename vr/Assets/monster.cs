@@ -6,16 +6,26 @@ public class Monster : MonoBehaviour
     public GameObject targetObject;
     public float targetTime = 1f;
     private bool isRagdollEnabled = false;
-    [SerializeField] private float health = 10;
+    [SerializeField] private int health = 100;
+    public int healthtemp = 0;
+    public static Monster Instance;
+
 
     // Self-contained timer for destruction
     private float deathTimer = 0f;
     private bool isDead = false;
 
+    public void UpdateHealth()
+    {
+        healthtemp = health;
+        Debug.Log("Monster Health: " + healthtemp);
+    }
+
     private void Awake()
     {
         _ragdollRigidbodies = GetComponentsInChildren<Rigidbody>();
         DisableRagdoll();
+        Instance = this;
     }
 
     private void Update()
@@ -29,7 +39,9 @@ public class Monster : MonoBehaviour
                 DestroySelf();
             }
         }
+        UpdateHealth();
     }
+
 
     private void DisableRagdoll()
     {
