@@ -3,7 +3,9 @@ guid: ead00d81e07c86d4a84ac72a78fa472a
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - leftOculusController: {fileID: 3070393932912889095, guid: aa14702dd234c8d4fb9ac0df97715ef7, type: 3}
+  - rightOculusController: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

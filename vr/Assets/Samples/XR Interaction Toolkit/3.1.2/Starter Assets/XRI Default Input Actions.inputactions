@@ -3397,6 +3397,76 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "New action map",
+            "id": "c172ba78-893f-4e0a-b291-dde1c6b88847",
+            "actions": [
+                {
+                    "name": "LeftTriggerButton",
+                    "type": "PassThrough",
+                    "id": "3ba20325-2018-4e57-8822-8bf07722090b",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightTriggerButton",
+                    "type": "PassThrough",
+                    "id": "da1ad058-f923-474e-a77c-65156f5fd5ad",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a94b3ef0-9067-4937-81da-4211ac9ca447",
+                    "path": "<OculusTouchController>{LeftHand}/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftTriggerButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f68687d0-9fe6-4f4e-8bbf-3bde47fa1be5",
+                    "path": "<OculusTouchController>{LeftHand}/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LeftTriggerButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dbcc0858-b029-4df3-990d-c04454ff8b58",
+                    "path": "<OculusTouchController>{RightHand}/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightTriggerButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b8f0e39d-72a6-479a-8a94-9f60cbceb1bc",
+                    "path": "<OculusTouchController>{RightHand}/triggerPressed",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RightTriggerButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

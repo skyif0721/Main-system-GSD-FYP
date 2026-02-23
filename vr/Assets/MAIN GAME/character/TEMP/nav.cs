@@ -27,5 +27,6 @@ public class nav : MonoBehaviour
     {
         if (targetObject != null)
             agent.SetDestination(targetObject.transform.position);
+    // the first object is broken. don't mind that.
     }
 }

@@ -35,8 +35,11 @@ using UnityEngine.InputSystem.Controls;
 namespace MiVRy {
 public class GestureManager : MonoBehaviour
 {
-    // Fields to be controlled by the editor:
-    public int numberOfParts {
+        // Fields to be controlled by the editor:
+        public GameObject leftOculusController;
+        public GameObject rightOculusController;
+
+        public int numberOfParts {
         get
         {
             if (gr != null)
@@ -583,7 +586,7 @@ public class GestureManager : MonoBehaviour
     }
 
     // Database of all controller models in the scene
-    private Dictionary<string, GameObject> controller_gameobjs = new Dictionary<string, GameObject>();
+    public Dictionary<string, GameObject> controller_gameobjs = new Dictionary<string, GameObject>();
 
     // Helper function to set the currently active controller model
     void SetActiveControllerModel(string side, string type)

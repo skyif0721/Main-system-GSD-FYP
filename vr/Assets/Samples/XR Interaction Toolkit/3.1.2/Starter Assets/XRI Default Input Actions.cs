@@ -3483,6 +3483,76 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""New action map"",
+            ""id"": ""c172ba78-893f-4e0a-b291-dde1c6b88847"",
+            ""actions"": [
+                {
+                    ""name"": ""LeftTriggerButton"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""3ba20325-2018-4e57-8822-8bf07722090b"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RightTriggerButton"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""da1ad058-f923-474e-a77c-65156f5fd5ad"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a94b3ef0-9067-4937-81da-4211ac9ca447"",
+                    ""path"": ""<OculusTouchController>{LeftHand}/triggerPressed"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftTriggerButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f68687d0-9fe6-4f4e-8bbf-3bde47fa1be5"",
+                    ""path"": ""<OculusTouchController>{LeftHand}/triggerPressed"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LeftTriggerButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dbcc0858-b029-4df3-990d-c04454ff8b58"",
+                    ""path"": ""<OculusTouchController>{RightHand}/triggerPressed"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightTriggerButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b8f0e39d-72a6-479a-8a94-9f60cbceb1bc"",
+                    ""path"": ""<OculusTouchController>{RightHand}/triggerPressed"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RightTriggerButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -3597,6 +3667,10 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         m_TouchscreenGestures_TwistDeltaRotation = m_TouchscreenGestures.FindAction("Twist Delta Rotation", throwIfNotFound: true);
         m_TouchscreenGestures_ScreenTouchCount = m_TouchscreenGestures.FindAction("Screen Touch Count", throwIfNotFound: true);
         m_TouchscreenGestures_SpawnObject = m_TouchscreenGestures.FindAction("Spawn Object", throwIfNotFound: true);
+        // New action map
+        m_Newactionmap = asset.FindActionMap("New action map", throwIfNotFound: true);
+        m_Newactionmap_LeftTriggerButton = m_Newactionmap.FindAction("LeftTriggerButton", throwIfNotFound: true);
+        m_Newactionmap_RightTriggerButton = m_Newactionmap.FindAction("RightTriggerButton", throwIfNotFound: true);
     }
 
     ~@XRIDefaultInputActions()
@@ -3610,6 +3684,7 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         UnityEngine.Debug.Assert(!m_XRIRightLocomotion.enabled, "This will cause a leak and performance issues, XRIDefaultInputActions.XRIRightLocomotion.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_XRIUI.enabled, "This will cause a leak and performance issues, XRIDefaultInputActions.XRIUI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_TouchscreenGestures.enabled, "This will cause a leak and performance issues, XRIDefaultInputActions.TouchscreenGestures.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Newactionmap.enabled, "This will cause a leak and performance issues, XRIDefaultInputActions.Newactionmap.Disable() has not been called.");
     }
 
     /// <summary>
@@ -5458,6 +5533,113 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
     /// Provides a new <see cref="TouchscreenGesturesActions" /> instance referencing this action map.
     /// </summary>
     public TouchscreenGesturesActions @TouchscreenGestures => new TouchscreenGesturesActions(this);
+
+    // New action map
+    private readonly InputActionMap m_Newactionmap;
+    private List<INewactionmapActions> m_NewactionmapActionsCallbackInterfaces = new List<INewactionmapActions>();
+    private readonly InputAction m_Newactionmap_LeftTriggerButton;
+    private readonly InputAction m_Newactionmap_RightTriggerButton;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "New action map".
+    /// </summary>
+    public struct NewactionmapActions
+    {
+        private @XRIDefaultInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public NewactionmapActions(@XRIDefaultInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Newactionmap/LeftTriggerButton".
+        /// </summary>
+        public InputAction @LeftTriggerButton => m_Wrapper.m_Newactionmap_LeftTriggerButton;
+        /// <summary>
+        /// Provides access to the underlying input action "Newactionmap/RightTriggerButton".
+        /// </summary>
+        public InputAction @RightTriggerButton => m_Wrapper.m_Newactionmap_RightTriggerButton;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Newactionmap; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="NewactionmapActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(NewactionmapActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="NewactionmapActions" />
+        public void AddCallbacks(INewactionmapActions instance)
+        {
+            if (instance == null || m_Wrapper.m_NewactionmapActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_NewactionmapActionsCallbackInterfaces.Add(instance);
+            @LeftTriggerButton.started += instance.OnLeftTriggerButton;
+            @LeftTriggerButton.performed += instance.OnLeftTriggerButton;
+            @LeftTriggerButton.canceled += instance.OnLeftTriggerButton;
+            @RightTriggerButton.started += instance.OnRightTriggerButton;
+            @RightTriggerButton.performed += instance.OnRightTriggerButton;
+            @RightTriggerButton.canceled += instance.OnRightTriggerButton;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="NewactionmapActions" />
+        private void UnregisterCallbacks(INewactionmapActions instance)
+        {
+            @LeftTriggerButton.started -= instance.OnLeftTriggerButton;
+            @LeftTriggerButton.performed -= instance.OnLeftTriggerButton;
+            @LeftTriggerButton.canceled -= instance.OnLeftTriggerButton;
+            @RightTriggerButton.started -= instance.OnRightTriggerButton;
+            @RightTriggerButton.performed -= instance.OnRightTriggerButton;
+            @RightTriggerButton.canceled -= instance.OnRightTriggerButton;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="NewactionmapActions.UnregisterCallbacks(INewactionmapActions)" />.
+        /// </summary>
+        /// <seealso cref="NewactionmapActions.UnregisterCallbacks(INewactionmapActions)" />
+        public void RemoveCallbacks(INewactionmapActions instance)
+        {
+            if (m_Wrapper.m_NewactionmapActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="NewactionmapActions.AddCallbacks(INewactionmapActions)" />
+        /// <seealso cref="NewactionmapActions.RemoveCallbacks(INewactionmapActions)" />
+        /// <seealso cref="NewactionmapActions.UnregisterCallbacks(INewactionmapActions)" />
+        public void SetCallbacks(INewactionmapActions instance)
+        {
+            foreach (var item in m_Wrapper.m_NewactionmapActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_NewactionmapActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="NewactionmapActions" /> instance referencing this action map.
+    /// </summary>
+    public NewactionmapActions @Newactionmap => new NewactionmapActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "XRI Head" which allows adding and removing callbacks.
     /// </summary>
@@ -6173,5 +6355,27 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSpawnObject(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "New action map" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="NewactionmapActions.AddCallbacks(INewactionmapActions)" />
+    /// <seealso cref="NewactionmapActions.RemoveCallbacks(INewactionmapActions)" />
+    public interface INewactionmapActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "LeftTriggerButton" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLeftTriggerButton(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RightTriggerButton" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRightTriggerButton(InputAction.CallbackContext context);
     }
 }
