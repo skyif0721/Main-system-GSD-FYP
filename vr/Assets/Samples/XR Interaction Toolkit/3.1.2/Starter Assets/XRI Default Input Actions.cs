@@ -1061,6 +1061,24 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""OpenShop"",
+                    ""type"": ""Button"",
+                    ""id"": ""f91c1525-2833-4661-afee-9abadd2d7853"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""InteractDialogue"",
+                    ""type"": ""Button"",
+                    ""id"": ""93693948-2f04-4d28-af5d-85003edbdab8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1369,6 +1387,28 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
                     ""processors"": ""ScaleVector2(x=0),StickDeadzone"",
                     ""groups"": """",
                     ""action"": ""Translate Manipulation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ef6bbf4e-7857-4bbb-887b-f5b492c045ae"",
+                    ""path"": ""<XRController>{LeftHand}/{PrimaryButton}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""OpenShop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e955f842-adb6-47e1-b2cb-99788865cb79"",
+                    ""path"": ""<XRController>{LeftHand}/{SecondaryButton}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InteractDialogue"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -3597,6 +3637,8 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         m_XRILeftInteraction_Manipulation = m_XRILeftInteraction.FindAction("Manipulation", throwIfNotFound: true);
         m_XRILeftInteraction_ScaleToggle = m_XRILeftInteraction.FindAction("Scale Toggle", throwIfNotFound: true);
         m_XRILeftInteraction_ScaleOverTime = m_XRILeftInteraction.FindAction("Scale Over Time", throwIfNotFound: true);
+        m_XRILeftInteraction_OpenShop = m_XRILeftInteraction.FindAction("OpenShop", throwIfNotFound: true);
+        m_XRILeftInteraction_InteractDialogue = m_XRILeftInteraction.FindAction("InteractDialogue", throwIfNotFound: true);
         // XRI Left Locomotion
         m_XRILeftLocomotion = asset.FindActionMap("XRI Left Locomotion", throwIfNotFound: true);
         m_XRILeftLocomotion_TeleportMode = m_XRILeftLocomotion.FindAction("Teleport Mode", throwIfNotFound: true);
@@ -4184,6 +4226,8 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
     private readonly InputAction m_XRILeftInteraction_Manipulation;
     private readonly InputAction m_XRILeftInteraction_ScaleToggle;
     private readonly InputAction m_XRILeftInteraction_ScaleOverTime;
+    private readonly InputAction m_XRILeftInteraction_OpenShop;
+    private readonly InputAction m_XRILeftInteraction_InteractDialogue;
     /// <summary>
     /// Provides access to input actions defined in input action map "XRI Left Interaction".
     /// </summary>
@@ -4243,6 +4287,14 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         /// Provides access to the underlying input action "XRILeftInteraction/ScaleOverTime".
         /// </summary>
         public InputAction @ScaleOverTime => m_Wrapper.m_XRILeftInteraction_ScaleOverTime;
+        /// <summary>
+        /// Provides access to the underlying input action "XRILeftInteraction/OpenShop".
+        /// </summary>
+        public InputAction @OpenShop => m_Wrapper.m_XRILeftInteraction_OpenShop;
+        /// <summary>
+        /// Provides access to the underlying input action "XRILeftInteraction/InteractDialogue".
+        /// </summary>
+        public InputAction @InteractDialogue => m_Wrapper.m_XRILeftInteraction_InteractDialogue;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -4305,6 +4357,12 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
             @ScaleOverTime.started += instance.OnScaleOverTime;
             @ScaleOverTime.performed += instance.OnScaleOverTime;
             @ScaleOverTime.canceled += instance.OnScaleOverTime;
+            @OpenShop.started += instance.OnOpenShop;
+            @OpenShop.performed += instance.OnOpenShop;
+            @OpenShop.canceled += instance.OnOpenShop;
+            @InteractDialogue.started += instance.OnInteractDialogue;
+            @InteractDialogue.performed += instance.OnInteractDialogue;
+            @InteractDialogue.canceled += instance.OnInteractDialogue;
         }
 
         /// <summary>
@@ -4352,6 +4410,12 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
             @ScaleOverTime.started -= instance.OnScaleOverTime;
             @ScaleOverTime.performed -= instance.OnScaleOverTime;
             @ScaleOverTime.canceled -= instance.OnScaleOverTime;
+            @OpenShop.started -= instance.OnOpenShop;
+            @OpenShop.performed -= instance.OnOpenShop;
+            @OpenShop.canceled -= instance.OnOpenShop;
+            @InteractDialogue.started -= instance.OnInteractDialogue;
+            @InteractDialogue.performed -= instance.OnInteractDialogue;
+            @InteractDialogue.canceled -= instance.OnInteractDialogue;
         }
 
         /// <summary>
@@ -5901,6 +5965,20 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnScaleOverTime(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "OpenShop" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnOpenShop(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "InteractDialogue" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInteractDialogue(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "XRI Left Locomotion" which allows adding and removing callbacks.

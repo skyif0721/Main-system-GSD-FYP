@@ -23,4 +23,12 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    public void OpenShopPressed(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            GameEventsManager.instance.inputEvents.OpenShopPressed();
+        }
+    }
+
 }

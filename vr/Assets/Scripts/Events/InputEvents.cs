@@ -48,4 +48,14 @@ public class InputEvents
             onDisablePlayerMovement();
         }
     }
+
+    public event Action<InputEventContext> onOpenShopPressed;
+
+    public void OpenShopPressed()
+    {
+        if (onOpenShopPressed != null)
+        {
+            onOpenShopPressed(this.inputEventContext);
+        }
+    }
 }
