@@ -33,7 +33,7 @@ public class ShopPanelUI : MonoBehaviour
 
     private void Awake()
     {
-        // contentParent.SetActive(false);
+        contentParent.SetActive(false);
         // inputActions = new @XRIDefaultInputActions();
         inShop = false;
     }
@@ -93,12 +93,11 @@ public class ShopPanelUI : MonoBehaviour
     private void LateUpdate()
     {
         if (canvas.gameObject.activeSelf) targetAction?.Invoke();
-        /*
+
         if (!playerIsNear)
         {
             ExitShop();
         }
-        */
     }
 
     public void OpenShopPressed(InputEventContext inputEventContext)

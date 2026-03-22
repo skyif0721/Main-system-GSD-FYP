@@ -12,13 +12,14 @@ public class ShopManager : MonoBehaviour
     public int[,] shopItems = new int[12, 12];
     public string[] shopItemsName = new string[12];
     public GameObject item;
-    public float coins;
+    public static float coins;
     public TextMeshProUGUI CoinsTxt;
 
     int spawned = 0;
 
     void Start()
     {
+        spawned = 0;
         CoinsTxt.text = "Coins: " + coins.ToString();
 
         shopItems[1, 1] = 1;
@@ -36,10 +37,10 @@ public class ShopManager : MonoBehaviour
         shopItems[3, 3] = 0;
         shopItems[3, 4] = 0;
 
-        shopItemsName[1] = "1";
-        shopItemsName[2] = "2";
-        shopItemsName[3] = "3";
-        shopItemsName[4] = "4";
+        shopItemsName[1] = "Life";
+        shopItemsName[2] = "Mana";
+        shopItemsName[3] = "Attack";
+        shopItemsName[4] = "Sword";
     }
 
     public void Buy()
