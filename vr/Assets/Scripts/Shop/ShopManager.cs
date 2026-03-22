@@ -11,8 +11,11 @@ public class ShopManager : MonoBehaviour
 {
     public int[,] shopItems = new int[12, 12];
     public string[] shopItemsName = new string[12];
+    public GameObject item;
     public float coins;
     public TextMeshProUGUI CoinsTxt;
+
+    int spawned = 0;
 
     void Start()
     {
@@ -33,10 +36,10 @@ public class ShopManager : MonoBehaviour
         shopItems[3, 3] = 0;
         shopItems[3, 4] = 0;
 
-        shopItemsName[1] = "1st";
-        shopItemsName[2] = "2nd";
-        shopItemsName[3] = "3rd";
-        shopItemsName[4] = "4th";
+        shopItemsName[1] = "1";
+        shopItemsName[2] = "2";
+        shopItemsName[3] = "3";
+        shopItemsName[4] = "4";
     }
 
     public void Buy()
@@ -75,5 +78,17 @@ public class ShopManager : MonoBehaviour
         {
             Debug.Log("Not enough coins.");
         }
+
+        spawnItem();
     }
+
+    private void spawnItem()
+    {
+        if (spawned < shopItems[3, 4])
+        {
+            Instantiate(item, transform.position, Quaternion.identity);
+        }
+        spawned++;
+    }
+
 }

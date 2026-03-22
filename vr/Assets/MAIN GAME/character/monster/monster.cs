@@ -12,6 +12,8 @@ public class Monster : MonoBehaviour
     public static Monster Instance;
     public int deadCount = 0;
 
+    ShopManager shopManager = new ShopManager();
+
 
     // Self-contained timer for destruction
     private float deathTimer = 0f;
@@ -20,7 +22,7 @@ public class Monster : MonoBehaviour
     public void UpdateHealth()
     {
         healthtemp = health;
-        Debug.Log("Monster Health: " + healthtemp);
+        // Debug.Log("Monster Health: " + healthtemp);
     }
 
     private void Awake()
@@ -88,6 +90,9 @@ public class Monster : MonoBehaviour
         {
             Destroy(targetObject);
         }
+
+        // gain coin
+        shopManager.coins += 50;
     }
 
     private void DestroySelf()

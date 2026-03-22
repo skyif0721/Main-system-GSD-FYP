@@ -24,7 +24,7 @@ public class ShopPanelUI : MonoBehaviour
     // [Header("Cinemachine")]
     // public CinemachineInputAxisController inputAxisController;
 
-    private @XRIDefaultInputActions inputActions;
+    // private @XRIDefaultInputActions inputActions;
 
     private bool playerIsNear = false;
     private bool inShop = false;
@@ -34,7 +34,7 @@ public class ShopPanelUI : MonoBehaviour
     private void Awake()
     {
         // contentParent.SetActive(false);
-        inputActions = new @XRIDefaultInputActions();
+        // inputActions = new @XRIDefaultInputActions();
         inShop = false;
     }
 
@@ -93,6 +93,12 @@ public class ShopPanelUI : MonoBehaviour
     private void LateUpdate()
     {
         if (canvas.gameObject.activeSelf) targetAction?.Invoke();
+        /*
+        if (!playerIsNear)
+        {
+            ExitShop();
+        }
+        */
     }
 
     public void OpenShopPressed(InputEventContext inputEventContext)

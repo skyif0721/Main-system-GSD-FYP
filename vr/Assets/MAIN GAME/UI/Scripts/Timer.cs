@@ -17,7 +17,7 @@ public class Timer : MonoBehaviour
         if (monsterScript != null)
         {
             health = monsterScript.healthtemp;
-            Debug.Log("Health in Timer: " + health);
+            // Debug.Log("Health in Timer: " + health);
         }
         else
         {
