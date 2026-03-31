@@ -33,42 +33,67 @@ public class ShopPanelUI : MonoBehaviour
 
     private void Awake()
     {
-        contentParent.SetActive(false);
-        // inputActions = new @XRIDefaultInputActions();
+        if (canvas == null) canvas = GetComponent<Canvas>();
+        if (contentParent != null) 
+            contentParent.SetActive(false);
+        else
+            Debug.LogWarning($"{name}: contentParent is not assigned.");
+       
+        if (!uiCamera) uiCamera = Camera.main;
         inShop = false;
+        UpdateTargetAction();
     }
 
     private void Start()
     {
-        if (!uiCamera) uiCamera = Camera.main;
-
-        // inputAxisController = player.GetComponentInChildren<CinemachineInputAxisController>();
-
-        UpdateTargetAction();
+        if (uiCamera == null) uiCamera = Camera.main;
     }
 
     private void OnEnable()
     {
         ShopExitButton.onClick.AddListener(ExitShop);
 
-        GameEventsManager.instance.inputEvents.onOpenShopPressed += OpenShopPressed;
+        var gem = GameEventsManager.instance;
+        if (gem?.inputEvents != null)
+        {
+            gem.inputEvents.onOpenShopPressed += OpenShopPressed;
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: GameEventsManager.instance or inputEvents is null in OnEnable.");
+        }
 
-        canvas.renderMode = RenderMode.WorldSpace;
-        canvas.worldCamera = uiCamera;
+        if (canvas != null)
+        {
+            canvas.renderMode = RenderMode.WorldSpace;
+            if (uiCamera == null) uiCamera = Camera.main;
+            canvas.worldCamera = uiCamera;
+        }
+        else
+        {
+            Debug.LogError($"{name}: Canvas is missing. Assign it or add a Canvas component.");
+        }
 
-        if (ShopExitButton)
+        if (ShopExitButton != null)
         {
             ShopExitButton.onClick.RemoveAllListeners();
             ShopExitButton.onClick.AddListener(() => ExitShop());
+        }
+        else
+        {
+            Debug.LogError($"{name}: ShopExitButton is not assigned.");
         }
 
     }
 
     private void OnDisable()
     {
-        ShopExitButton.onClick.RemoveListener(ExitShop);
+        if (ShopExitButton != null)
+            ShopExitButton.onClick.RemoveListener(ExitShop);
 
-        GameEventsManager.instance.inputEvents.onOpenShopPressed -= OpenShopPressed;
+        var gem = GameEventsManager.instance;
+        if (gem?.inputEvents != null)
+            gem.inputEvents.onOpenShopPressed -= OpenShopPressed;
     }
     
     private void UpdateTargetAction()
@@ -92,7 +117,7 @@ public class ShopPanelUI : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (canvas.gameObject.activeSelf) targetAction?.Invoke();
+        if (!canvas && canvas.gameObject.activeSelf) targetAction?.Invoke();
 
         if (!playerIsNear)
         {
@@ -117,7 +142,7 @@ public class ShopPanelUI : MonoBehaviour
         if (otherCollider.CompareTag("Player"))
         {
             playerIsNear = true;
-            buyableMark.SetActive(true);
+            if(buyableMark) buyableMark.SetActive(true);
         }
     }
 
@@ -126,19 +151,19 @@ public class ShopPanelUI : MonoBehaviour
         if (otherCollider.CompareTag("Player"))
         {
             playerIsNear = false;
-            buyableMark.SetActive(false);
+            if (buyableMark) buyableMark.SetActive(false);
         }
     }
 
     private void ShopEntered()
     {
-        contentParent.SetActive(true);
+        if(contentParent) contentParent.SetActive(true);
         // inputAxisController.enabled = false;
     }
 
     private void ExitShop()
     {
-        contentParent.SetActive(false);
+        if (contentParent) contentParent.SetActive(false);
         inShop = false;
         // inputAxisController.enabled = true;
     }

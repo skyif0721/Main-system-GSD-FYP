@@ -11,7 +11,7 @@ public class ShopManager : MonoBehaviour
 {
     public int[,] shopItems = new int[12, 12];
     public string[] shopItemsName = new string[12];
-    public GameObject item;
+    public GameObject[] item = new GameObject[12];
     public static float coins;
     public TextMeshProUGUI CoinsTxt;
 
@@ -87,7 +87,7 @@ public class ShopManager : MonoBehaviour
     {
         if (spawned < shopItems[3, 4])
         {
-            Instantiate(item, transform.position, Quaternion.identity);
+            Instantiate(item[0], transform.position, Quaternion.identity);
         }
         spawned++;
     }
