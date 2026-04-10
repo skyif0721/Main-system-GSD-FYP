@@ -24,12 +24,24 @@ public class NPCEvent : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
+        var gem = GameEventsManager.instance;
+        if (gem?.inputEvents != null)
+        {
+            gem.inputEvents.onInteractPressed += InteractPressed;
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: GameEventsManager.instance or inputEvents is null in OnEnable.");
+        }
     }
 
     private void OnDisable()
     {
-        GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
+        var gem = GameEventsManager.instance;
+        if (gem?.inputEvents != null)
+        {
+            gem.inputEvents.onInteractPressed -= InteractPressed;
+        }
     }
 
     private void InteractPressed(InputEventContext inputEventContext)

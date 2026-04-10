@@ -21,16 +21,28 @@ public class DialoguePanelUi : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventsManager.instance.dialogueEvents.onDialogueStarted += DialogueStarted;
-        GameEventsManager.instance.dialogueEvents.onDialogueFinished += DialogueFinished;
-        GameEventsManager.instance.dialogueEvents.onDisplayDialogue += DisplayDialogue;
+        var gem = GameEventsManager.instance;
+        if (gem?.dialogueEvents != null)
+        {
+            gem.dialogueEvents.onDialogueStarted += DialogueStarted;
+            gem.dialogueEvents.onDialogueFinished += DialogueFinished;
+            gem.dialogueEvents.onDisplayDialogue += DisplayDialogue;
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: GameEventsManager.instance or inputEvents is null in OnEnable.");
+        }
     }
 
     private void OnDisable()
     {
-        GameEventsManager.instance.dialogueEvents.onDialogueStarted -= DialogueStarted;
-        GameEventsManager.instance.dialogueEvents.onDialogueFinished -= DialogueFinished;
-        GameEventsManager.instance.dialogueEvents.onDisplayDialogue -= DisplayDialogue;
+        var gem = GameEventsManager.instance;
+        if (gem?.dialogueEvents != null)
+        {
+            gem.dialogueEvents.onDialogueStarted += DialogueStarted;
+            gem.dialogueEvents.onDialogueFinished += DialogueFinished;
+            gem.dialogueEvents.onDisplayDialogue += DisplayDialogue;
+        }
     }
 
     private void DialogueStarted()
