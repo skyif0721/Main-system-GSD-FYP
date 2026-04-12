@@ -21,16 +21,28 @@ public class DialogueManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventsManager.instance.dialogueEvents.onEnterDialogue += EnterDialogue;
-        GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
-        GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
+        var gem = GameEventsManager.instance;
+        if (gem?.inputEvents != null)
+        {
+            gem.dialogueEvents.onEnterDialogue += EnterDialogue;
+            gem.inputEvents.onInteractPressed += InteractPressed;
+            gem.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
+        }
+        else
+        {
+            Debug.LogWarning($"{name}: GameEventsManager.instance or inputEvents is null in OnEnable.");
+        }
     }
 
     private void OnDisable()
     {
-        GameEventsManager.instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
-        GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
-        GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;
+        var gem = GameEventsManager.instance;
+        if (gem?.inputEvents != null)
+        {
+            gem.dialogueEvents.onEnterDialogue -= EnterDialogue;
+            gem.inputEvents.onInteractPressed -= InteractPressed;
+            gem.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;
+        }
     }
 
     private void UpdateChoiceIndex(int choiceIndex)

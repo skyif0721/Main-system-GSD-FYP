@@ -1,3 +1,4 @@
+using Ink.Parsed;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,15 +13,18 @@ public class ShopManager : MonoBehaviour
     public int[,] shopItems = new int[12, 12];
     public string[] shopItemsName = new string[12];
     public GameObject[] item = new GameObject[12];
-    public static float coins;
-    public TextMeshProUGUI CoinsTxt;
+    public static int coins;
+    public GameObject CoinsTxt;
 
     int spawned = 0;
+
+    public Sprite[] numberSprites; // Assign 0-9 in order
+    public Image[] digitImages;    // Assign UI Image objects in order
 
     void Start()
     {
         spawned = 0;
-        CoinsTxt.text = "Coins: " + coins.ToString();
+        DisplayNumber(coins);
 
         shopItems[1, 1] = 1;
         shopItems[1, 2] = 2;
@@ -68,7 +72,7 @@ public class ShopManager : MonoBehaviour
             coins -= price;
             shopItems[3, id]++;
 
-            CoinsTxt.text = "Coins: " + coins;
+            DisplayNumber(coins);
 
             if (info.quantityTxt != null)
                 info.quantityTxt.text = shopItems[3, id].ToString();
@@ -83,13 +87,45 @@ public class ShopManager : MonoBehaviour
         spawnItem();
     }
 
+    public void DisplayNumber(int number)
+    {
+        if (digitImages == null || digitImages.Length == 0)
+        {
+            Debug.LogWarning($"{name}: digitImages is null or empty; cannot display number.");
+            return;
+        }
+
+        if (numberSprites == null || numberSprites.Length < 10)
+        {
+            Debug.LogWarning($"{name}: numberSprites is null or does not contain 10 digits.");
+            return;
+        }
+
+        string numStr = number.ToString();
+
+        for (int i = 0; i < digitImages.Length; i++)
+        {
+            if (i < numStr.Length)
+            {
+                // Convert char to int (e.g., '5' - '0' = 5)
+                int digit = numStr[i] - '0';
+                digitImages[i].sprite = numberSprites[digit];
+                digitImages[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                // Hide unused image objects
+                digitImages[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
     private void spawnItem()
     {
         if (spawned < shopItems[3, 4])
         {
             Instantiate(item[0], transform.position, Quaternion.identity);
+            spawned++;
         }
-        spawned++;
     }
-
 }

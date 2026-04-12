@@ -1,3 +1,5 @@
+using Ink.Parsed;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +13,8 @@ public class Monster : MonoBehaviour
     public int healthtemp = 0;
     public static Monster Instance;
     public int deadCount = 0;
+
+    public GameObject shopManager;
 
 
     // Self-contained timer for destruction
@@ -91,6 +95,12 @@ public class Monster : MonoBehaviour
 
         // gain coin
         ShopManager.coins += 50;
+        if (shopManager != null)
+        {
+            var sm = shopManager.GetComponent<ShopManager>();
+            sm.DisplayNumber(ShopManager.coins);
+        }
+
     }
 
     private void DestroySelf()
