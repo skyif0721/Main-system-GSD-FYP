@@ -36,7 +36,7 @@
                     "name": "Toggle Manipulate Left",
                     "type": "Button",
                     "id": "847b79d9-a69b-4484-8688-a4bf40e58163",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -45,7 +45,7 @@
                     "name": "Toggle Manipulate Right",
                     "type": "Button",
                     "id": "241f6068-ebc8-4c6d-b747-8bc2c1f74f87",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -54,7 +54,7 @@
                     "name": "Toggle Manipulate Body",
                     "type": "Button",
                     "id": "c81093ea-c17e-4430-a3df-bccabef74af4",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -63,7 +63,7 @@
                     "name": "Manipulate Left",
                     "type": "Button",
                     "id": "07c46cc4-c35d-4364-a878-68fad8ab8c64",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -72,7 +72,7 @@
                     "name": "Manipulate Right",
                     "type": "Button",
                     "id": "307cb608-f32e-48a3-8ce6-d1cd83a5fb90",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -81,7 +81,7 @@
                     "name": "Manipulate Head",
                     "type": "Button",
                     "id": "f5febf74-651b-4f73-8d0a-08b0acdabc4d",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -99,7 +99,7 @@
                     "name": "Cycle Devices",
                     "type": "Button",
                     "id": "d728c6fb-4deb-4268-9110-d64c7861cd17",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -135,7 +135,7 @@
                     "name": "Rotate Mode Override",
                     "type": "Button",
                     "id": "2e390909-c0f6-4ca5-b8bc-4c54090f96d9",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -198,7 +198,7 @@
                     "name": "Toggle Cursor Lock",
                     "type": "Button",
                     "id": "9bd36ab1-f676-4ff4-8a4d-ba0c6fb36268",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -207,7 +207,7 @@
                     "name": "Toggle Primary 2D Axis Target",
                     "type": "Button",
                     "id": "e0fdec2d-309b-4313-aad7-9dcc71f1394d",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false

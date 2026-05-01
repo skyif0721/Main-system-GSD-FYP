@@ -9,8 +9,6 @@ TagManager:
   - Destroyer
   - MiniWorldCamera
   - Water
-  - FollowTarget
-  - monster
   layers:
   - Default
   - TransparentFX
@@ -18,7 +16,7 @@ TagManager:
   - 
   - Water
   - UI
-  - points
+  - 
   - 
   - 
   - 

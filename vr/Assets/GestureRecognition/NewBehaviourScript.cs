@@ -1,26 +1,33 @@
 using MiVRy;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public string gestureName = "";
+    public TrailRenderer gestureTrail; // Drag your trail object here in the Inspector
+
+    // Call this when the user presses the trigger to start drawing
+    public void StartDrawing()
     {
-        
+        gestureTrail.Clear(); // Wipe old lines
+        gestureTrail.emitting = true;
     }
 
-    // Update is called once per frame
-    void Update()
+    // Call this when the user releases the trigger
+    public void StopDrawing()
     {
-        
+        gestureTrail.emitting = false;
     }
+
     public void OnGestureCompleted(GestureCompletionData data)
     {
-        if (data.gestureID == 123)
+        // Turn off the trail when the gesture is recognized
+        StopDrawing();
+
+        if (data.gestureID >= 1 && data.gestureID <= 4)
         {
-            Debug.Log("Gesture 123 completed with confidence ");
+            Debug.Log($"Gesture {data.gestureID} recognized: {data.gestureName}");
+            gestureName = data.gestureName;
         }
     }
 }

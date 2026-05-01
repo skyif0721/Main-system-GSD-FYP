@@ -54,7 +54,7 @@
                     "name": "Secondary Button",
                     "type": "Button",
                     "id": "970b4191-957d-4a7f-ba64-e0e701950d99",
-                    "expectedControlType": "",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
