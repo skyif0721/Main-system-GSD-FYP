@@ -1742,7 +1742,7 @@ Transform:
   m_GameObject: {fileID: 147772592}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 108.440865, y: 0.56, z: 113.124115}
+  m_LocalPosition: {x: 108.440865, y: -0.01, z: 113.124115}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6542,8 +6542,8 @@ Transform:
   m_GameObject: {fileID: 549955345}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 0.05, z: 3}
+  m_LocalPosition: {x: 0, y: 0.000000002794, z: 0}
+  m_LocalScale: {x: 7.9851, y: 0.133085, z: 7.9851}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 147772593}
@@ -10398,7 +10398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05504b75fa860c84d8afc875bd0e8daf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterPrefab: {fileID: 1895961717}
+  monsterPrefab: {fileID: 8632507417833580109, guid: 8bcc05de9ad6ae143ba2a9898a10812e, type: 3}
   spawnCenter: {fileID: 1803088864}
   spawnRadius: 15
   spawnInterval: 5

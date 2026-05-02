@@ -42,10 +42,7 @@ public class MonsterBlock : MonoBehaviour
             // Update Animator if it exists
             if (animator != null)
             {
-                // Assuming the animator has a "Speed" or similar parameter. 
-                // If not, it might just play the default animation.
-                // We can try setting a generic "Speed" float if it exists.
-                // animator.SetFloat("Speed", agent.velocity.magnitude);
+                animator.SetFloat("Speed", agent.velocity.magnitude);
             }
 
             // Distance-based attack
@@ -71,7 +68,7 @@ public class MonsterBlock : MonoBehaviour
             // Trigger attack animation if possible
             if (animator != null)
             {
-                // animator.SetTrigger("Attack");
+                animator.SetTrigger("Attack");
             }
         }
     }
@@ -110,6 +107,11 @@ public class MonsterBlock : MonoBehaviour
         health -= damage;
         Debug.Log("MonsterBlock took " + damage + " damage. Health remaining: " + health);
 
+        if (health > 0 && animator != null)
+        {
+            animator.SetTrigger("Hit");
+        }
+
         if (health <= 0)
         {
             Die();
@@ -121,6 +123,7 @@ public class MonsterBlock : MonoBehaviour
         isDead = true;
         
         if (agent != null) agent.enabled = false;
+        if (animator != null) animator.SetTrigger("Die");
 
         // Add coins
         ShopManager.coins += coinsToDrop;
