@@ -35,6 +35,8 @@ public class WeaponShopManager : MonoBehaviour
     public Transform rightControllerTransform;
     [Tooltip("Offset from right controller where weapon appears (forward = in front of hand)")]
     public Vector3 spawnOffset = new Vector3(0f, 0f, 0.3f);
+    [Tooltip("Optional spawn point. If set, weapons will spawn here instead of the controller.")]
+    public Transform spawnPoint;
 
     // Per-weapon stats: (damage, maxDurability)
     // Cheaper weapons = lower damage + lower durability (breaks faster)
@@ -213,7 +215,13 @@ public class WeaponShopManager : MonoBehaviour
         // ── Spawn position: right controller or camera fallback ───────────────
         Vector3 spawnPos;
         Quaternion spawnRot;
-        if (rightControllerTransform != null)
+        
+        if (spawnPoint != null)
+        {
+            spawnPos = spawnPoint.position;
+            spawnRot = spawnPoint.rotation;
+        }
+        else if (rightControllerTransform != null)
         {
             spawnPos = rightControllerTransform.position
                      + rightControllerTransform.TransformDirection(spawnOffset);
@@ -226,6 +234,24 @@ public class WeaponShopManager : MonoBehaviour
                 ? cam.transform.position + cam.transform.forward * 0.5f + Vector3.down * 0.2f
                 : Vector3.zero;
             spawnRot = Quaternion.identity;
+        }
+
+        // ── Check if already exists ───────────────────────────────────────────
+        GameObject existing = GameObject.Find($"{w.weaponName}_Spawned");
+        if (existing != null)
+        {
+            existing.transform.position = spawnPos;
+            existing.transform.rotation = spawnRot;
+            
+            Rigidbody existingRb = existing.GetComponent<Rigidbody>();
+            if (existingRb != null)
+            {
+                existingRb.velocity = Vector3.zero;
+                existingRb.angularVelocity = Vector3.zero;
+            }
+            
+            ShowStatus($"{w.weaponName} summoned!");
+            return;
         }
 
         // ── Instantiate ───────────────────────────────────────────────────────

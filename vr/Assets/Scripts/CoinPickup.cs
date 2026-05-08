@@ -24,10 +24,34 @@ public class CoinPickup : MonoBehaviour
 
     private bool collected = false;
     private XRGrabInteractable grabInteractable;
+    
+    [Tooltip("How long before the coin despawns (in seconds)")]
+    public float despawnTime = 3f;
+    private float timer = 0f;
 
     void Awake()
     {
         grabInteractable = GetComponent<XRGrabInteractable>();
+    }
+
+    void Update()
+    {
+        if (collected) return;
+
+        // Don't despawn if the player is holding it
+        bool isHeld = grabInteractable != null && grabInteractable.isSelected;
+        if (isHeld)
+        {
+            timer = 0f; // Reset timer while held
+            return;
+        }
+
+        timer += Time.deltaTime;
+        if (timer >= despawnTime)
+        {
+            Debug.Log($"[CoinPickup] Coin despawned after {despawnTime} seconds.");
+            Destroy(gameObject);
+        }
     }
 
     void OnTriggerEnter(Collider other)

@@ -1,4 +1,4 @@
-﻿using GLTFast.Schema;
+using GLTFast.Schema;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -47,6 +47,10 @@ public class HealthHPbar: MonoBehaviour
         // If we found the monster GameObject, get its Monster component
         if (monsterObject != null)
         {
+            if (MonsterStat == null)
+            {
+                MonsterStat = monsterObject.GetComponent<MonsterStat>();
+            }
 
             if (MonsterStat == null)
             {

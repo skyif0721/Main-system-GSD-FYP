@@ -33,6 +33,11 @@ public class PlayerStats : MonoBehaviour
             Debug.Log("[PlayerStats] Block active! Damage reduced to: " + damage);
         }
 
+        if (damage > 0 && DamageFlash.Instance != null)
+        {
+            DamageFlash.Instance.Flash(500f);
+        }
+
         currentHealth -= damage;
         if (currentHealth < 0) currentHealth = 0;
 

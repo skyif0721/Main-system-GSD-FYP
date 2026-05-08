@@ -71,6 +71,13 @@ public class Monster : MonoBehaviour
         // Self-contained damage handling
         health -= damage;
 
+        // Show floating damage text
+        GameObject textObj = new GameObject("DamageText");
+        // Position it slightly above the monster
+        textObj.transform.position = transform.position + Vector3.up * 1.5f;
+        FloatingDamageText damageText = textObj.AddComponent<FloatingDamageText>();
+        damageText.Setup(damage);
+
         if (health <= 0 && !isRagdollEnabled)
         {
             Die();
