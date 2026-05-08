@@ -1,28 +1,28 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MonsterBlock : MonoBehaviour
+public class MonsterStat : MonoBehaviour
 {
-    public int health = 50;
+    public int health = 100;
     public int damageToPlayer = 10;
     public int coinsToDrop = 20;
     public float attackRange = 1.5f;
     public float attackCooldown = 1.0f;
+    public GameObject targetObject;
 
     private NavMeshAgent agent;
     private Transform playerTransform;
     private PlayerStats playerStats;
     private float lastAttackTime;
     private Animator animator;
-    private Monster monsterScript;
     private bool isDead = false;
 
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        monsterScript = GetComponent<Monster>();
-        
+
+
         GameObject player = GameObject.Find("Complete XR Origin Set Up Variant");
         if (player != null)
         {
@@ -55,6 +55,10 @@ public class MonsterBlock : MonoBehaviour
                     lastAttackTime = Time.time;
                 }
             }
+
+            if (health <= 0) { 
+                Die();
+            }
         }
     }
 
@@ -64,7 +68,7 @@ public class MonsterBlock : MonoBehaviour
         {
             playerStats.TakeDamage(damageToPlayer);
             Debug.Log("Monster attacked player for " + damageToPlayer + " damage!");
-            
+
             // Trigger attack animation if possible
             if (animator != null)
             {
@@ -91,7 +95,7 @@ public class MonsterBlock : MonoBehaviour
         if (obj.CompareTag("Weapon") || obj.name.Contains("Sword") || obj.name.Contains("Axe") || obj.name.Contains("Dagger") || obj.name.Contains("Mace") || obj.name.Contains("Hammer") || obj.name.Contains("Spear") || obj.name.Contains("Halberd"))
         {
             int damage = 10;
-            Co weaponCo = obj.GetComponentInParent<Co>();
+            WeaponMonster weaponCo = obj.GetComponentInParent<WeaponMonster>();
             if (weaponCo != null)
             {
                 damage = weaponCo.damages;
@@ -103,7 +107,7 @@ public class MonsterBlock : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (isDead) return;
-        
+
         health -= damage;
         Debug.Log("MonsterBlock took " + damage + " damage. Health remaining: " + health);
 
@@ -111,45 +115,10 @@ public class MonsterBlock : MonoBehaviour
         {
             animator.SetTrigger("Hit");
         }
-
-        if (health <= 0)
-        {
-            Die();
-        }
     }
 
     private void Die()
     {
-        isDead = true;
-        
-        if (agent != null) agent.enabled = false;
-        if (animator != null) animator.SetTrigger("Die");
-
-        // Add coins
-        ShopManager.coins += coinsToDrop;
-        
-        // Update ShopManager UI
-        ShopManager shopManager = FindObjectOfType<ShopManager>();
-        if (shopManager != null)
-        {
-            shopManager.DisplayNumber(ShopManager.coins);
-        }
-
-        // Save coins
-        PlayerPrefs.SetInt("SavedCoins", ShopManager.coins);
-        PlayerPrefs.Save();
-
-        Debug.Log("MonsterBlock died! Dropped " + coinsToDrop + " coins. Total coins: " + ShopManager.coins);
-
-        // Trigger the Monster script's ragdoll/death if it exists
-        if (monsterScript != null)
-        {
-            monsterScript.TakeDamage(9999); // Force the Monster script to die and ragdoll
-            // The Monster script will handle destroying the object after 10 seconds
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Destroy(targetObject, 3.0f);
     }
 }

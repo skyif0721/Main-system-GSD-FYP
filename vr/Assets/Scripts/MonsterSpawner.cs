@@ -47,8 +47,7 @@ public class MonsterSpawner : MonoBehaviour
             newMonster.SetActive(true);
             currentMonsters++;
             
-            MonsterTracker tracker = newMonster.AddComponent<MonsterTracker>();
-            tracker.spawner = this;
+
             
             Debug.Log("Spawned a new monster at " + hit.position);
         }
@@ -64,26 +63,3 @@ public class MonsterSpawner : MonoBehaviour
     }
 }
 
-public class MonsterTracker : MonoBehaviour
-{
-    public MonsterSpawner spawner;
-    private bool isDead = false;
-
-    private void Update()
-    {
-        if (!isDead)
-        {
-            MonsterBlock mb = GetComponent<MonsterBlock>();
-            if (mb != null && mb.health <= 0)
-            {
-                isDead = true;
-                if (spawner != null) spawner.MonsterDied();
-            }
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (!isDead && spawner != null) spawner.MonsterDied();
-    }
-}

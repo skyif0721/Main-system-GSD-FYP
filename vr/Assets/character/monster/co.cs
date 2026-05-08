@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Co : MonoBehaviour  // Better to use PascalCase for class names
+public class WeaponMonster : MonoBehaviour  // Better to use PascalCase for class names
 {
     public int damages = 10;
     public int totalDamage = 0;

@@ -1,22 +1,28 @@
-﻿using UnityEngine;
+﻿using GLTFast.Schema;
+using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class Timer : MonoBehaviour
+public class HealthHPbar: MonoBehaviour
 {
     public Slider slider;
-    public int health;
+    private int health;
     Text text;
 
     // Add a reference to your monster GameObject
     public GameObject monsterObject; // Drag your monster GameObject here in Inspector
-    private Monster monsterScript;   // This will hold the reference to the Monster component
+    private MonsterStat MonsterStat; 
+
+
+
 
     void UpdateHealth()
     {
         // Check if we have a reference to the monster script
-        if (monsterScript != null)
+        if (MonsterStat != null)
         {
-            health = monsterScript.healthtemp;
+            health = MonsterStat.health;
+            slider.value = health;
             // Debug.Log("Health in Timer: " + health);
         }
         else
@@ -29,6 +35,7 @@ public class Timer : MonoBehaviour
     {
         // Get the Text component from this GameObject
         text = GetComponent<Text>();
+        MonsterStat = GetComponent<MonsterStat>();
 
         // Try to find the monster if not assigned
         if (monsterObject == null)
@@ -40,9 +47,8 @@ public class Timer : MonoBehaviour
         // If we found the monster GameObject, get its Monster component
         if (monsterObject != null)
         {
-            monsterScript = monsterObject.GetComponent<Monster>();
 
-            if (monsterScript == null)
+            if (MonsterStat == null)
             {
                 Debug.LogError("Found monster GameObject but no Monster script attached!");
             }
@@ -53,7 +59,7 @@ public class Timer : MonoBehaviour
         }
 
         // Initialize health if we have the script
-        if (monsterScript != null)
+        if (MonsterStat != null)
         {
             UpdateHealth();
             slider.maxValue = 100;
@@ -66,7 +72,7 @@ public class Timer : MonoBehaviour
         // Update health every frame
 
             UpdateHealth();
-            slider.value = health;
+            
 
 
     }
