@@ -27,6 +27,10 @@ public class VRGestureResponse : MonoBehaviour
     [Tooltip("Damage dealt to enemies on push")]
     public int pushDamage = 25;
 
+    [Header("Fireball Settings")]
+    public GameObject fireballPrefab;
+    public Transform fireballSpawnPoint;
+
     // Static flag so MonsterStat can check if player is blocking
     public static bool PlayerIsBlocking = false;
     public static float BlockDamageMultiplier = 0f;
@@ -102,31 +106,44 @@ public class VRGestureResponse : MonoBehaviour
 
     void HandlePush()
     {
-        Debug.Log("[VRGestureResponse] Push! Knocking back nearby enemies.");
+        Debug.Log("[VRGestureResponse] Push! Shooting fireball.");
 
-        Vector3 origin = playerStats != null
-            ? playerStats.transform.position
-            : transform.position;
-
-        Collider[] hits = Physics.OverlapSphere(origin, pushRadius);
-        foreach (Collider col in hits)
+        if (fireballPrefab != null)
         {
-            // Try MonsterStat (your enemy script)
-            MonsterStat monster = col.GetComponentInParent<MonsterStat>();
-            if (monster != null)
+            Transform spawnPoint = fireballSpawnPoint != null ? fireballSpawnPoint : (playerStats != null ? playerStats.transform : transform);
+            
+            // Try to get the camera forward direction
+            Vector3 forward = spawnPoint.forward;
+            Camera mainCam = Camera.main;
+            if (mainCam != null)
             {
-                // Deal push damage
-                monster.TakeDamage(pushDamage);
+                forward = mainCam.transform.forward;
+                spawnPoint = mainCam.transform;
+            }
 
-                // Knock back via Rigidbody
-                Rigidbody rb = col.GetComponentInParent<Rigidbody>();
-                if (rb != null)
+            GameObject fireball = Instantiate(fireballPrefab, spawnPoint.position + forward * 0.5f, Quaternion.LookRotation(forward));
+        }
+        else
+        {
+            // Fallback to old push logic if no fireball prefab
+            Vector3 origin = playerStats != null
+                ? playerStats.transform.position
+                : transform.position;
+
+            Collider[] hits = Physics.OverlapSphere(origin, pushRadius);
+            foreach (Collider col in hits)
+            {
+                MonsterStat monster = col.GetComponentInParent<MonsterStat>();
+                if (monster != null)
                 {
-                    Vector3 dir = (col.transform.position - origin).normalized;
-                    rb.AddForce(dir * pushForce, ForceMode.Impulse);
+                    monster.TakeDamage(pushDamage);
+                    Rigidbody rb = col.GetComponentInParent<Rigidbody>();
+                    if (rb != null)
+                    {
+                        Vector3 dir = (col.transform.position - origin).normalized;
+                        rb.AddForce(dir * pushForce, ForceMode.Impulse);
+                    }
                 }
-
-                Debug.Log($"[VRGestureResponse] Pushed {col.gameObject.name} for {pushDamage} damage.");
             }
         }
     }

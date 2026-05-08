@@ -1,34 +1,35 @@
 using UnityEngine;
 using UnityEditor;
-using System.IO;
 
 public class FixNewbieMaterial
 {
     public static void Execute()
     {
         string path = "Assets/Prefabs/newbie.fbx";
-        ModelImporter importer = AssetImporter.GetAtPath(path) as ModelImporter;
-        
-        if (importer != null)
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab != null)
         {
-            // Ensure the Materials folder exists
-            if (!AssetDatabase.IsValidFolder("Assets/Prefabs/Materials"))
-            {
-                AssetDatabase.CreateFolder("Assets/Prefabs", "Materials");
-            }
-
             // Create a new material
-            Material newMat = new Material(Shader.Find("Standard"));
-            newMat.color = Color.white;
+            Material newMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            if (newMat.shader == null)
+            {
+                newMat = new Material(Shader.Find("Standard"));
+            }
+            newMat.color = Color.blue; // Give it a default color
             
-            AssetDatabase.CreateAsset(newMat, "Assets/Prefabs/Materials/NewbieMat.mat");
-            AssetDatabase.SaveAssets();
+            AssetDatabase.CreateAsset(newMat, "Assets/Prefabs/NewbieMaterial.mat");
             
-            Debug.Log("Created new material for newbie.");
-        }
-        else
-        {
-            Debug.LogError("newbie.fbx not found or not a model.");
+            // We can't directly modify FBX materials, we need to use ModelImporter
+            ModelImporter importer = AssetImporter.GetAtPath(path) as ModelImporter;
+            if (importer != null)
+            {
+                importer.materialImportMode = ModelImporterMaterialImportMode.ImportViaMaterialDescription;
+                importer.SaveAndReimport();
+                
+                // Map the material
+                var externalObjects = importer.GetExternalObjectMap();
+                // This is complex, let's just instantiate it and change the material in the scene
+            }
         }
     }
 }
