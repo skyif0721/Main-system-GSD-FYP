@@ -9,6 +9,10 @@ TagManager:
   - Destroyer
   - MiniWorldCamera
   - Water
+  - Fire
+  - monster
+  - ShopZone
+  - Weapon
   layers:
   - Default
   - TransparentFX

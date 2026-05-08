@@ -117,8 +117,14 @@ public class MonsterStat : MonoBehaviour
         }
     }
 
+    public GameObject coinPrefab; // Assign in Inspector
+
     private void Die()
     {
-        Destroy(targetObject, 3.0f);
+        if (coinPrefab != null)
+        {
+            Instantiate(coinPrefab, transform.position, Quaternion.identity);
+        }
+        Destroy(targetObject, 1.0f);
     }
 }

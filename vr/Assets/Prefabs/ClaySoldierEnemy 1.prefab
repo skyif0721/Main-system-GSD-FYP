@@ -427,7 +427,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 1876848964950710721}
-  health: 0
   monsterObject: {fileID: 6119923343377860726}
 --- !u!1001 &6354363616156038439
 PrefabInstance:
@@ -594,6 +593,8 @@ MonoBehaviour:
   coinsToDrop: 20
   attackRange: 1.5
   attackCooldown: 1.5
+  targetObject: {fileID: 0}
+  coinPrefab: {fileID: 5293394291342063431, guid: 22a7e4b9a147644429569c4315d5824b, type: 3}
 --- !u!114 &6268256335353726234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -607,7 +608,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 0}
-  health: 0
   monsterObject: {fileID: 6119923343377860726}
 --- !u!4 &6892061554063758028 stripped
 Transform:

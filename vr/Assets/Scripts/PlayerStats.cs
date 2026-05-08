@@ -26,11 +26,17 @@ public class PlayerStats : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        // If player is blocking, apply damage multiplier (0 = no damage)
+        if (VRGestureResponse.PlayerIsBlocking)
+        {
+            damage = Mathf.RoundToInt(damage * VRGestureResponse.BlockDamageMultiplier);
+            Debug.Log("[PlayerStats] Block active! Damage reduced to: " + damage);
+        }
+
         currentHealth -= damage;
         if (currentHealth < 0) currentHealth = 0;
-        
-        UpdateHealthUI();
 
+        UpdateHealthUI();
         Debug.Log("Player took " + damage + " damage. Health remaining: " + currentHealth);
 
         if (currentHealth <= 0)
