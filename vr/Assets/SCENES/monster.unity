@@ -1446,6 +1446,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item: {fileID: 1501951495}
   rate: 100
+  maxItems: 1
+  currentItems: 0
 --- !u!1001 &1218396781
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1910,6 +1912,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d963384de276cf0448df85b714e984a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetObject: {fileID: 0}
+  targetTime: 1
+  health: 100
+  healthtemp: 0
+  deadCount: 0
+  shopManager: {fileID: 0}
 --- !u!195 &1501951506
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2181,8 +2189,16 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 454.4
       objectReference: {fileID: 0}
+    - target: {fileID: 1535270415050945640, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_RequestedTrackingOriginMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3115292631596432376, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_RenderPostProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4236523085834320165, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IgnoreTrackingState
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4356456892009499901, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
@@ -2231,6 +2247,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4838881153480763383, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_RenderPostProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010792718146615127, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IgnoreTrackingState
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482921815040739407, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IgnoreTrackingState
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6947604102996551011, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}

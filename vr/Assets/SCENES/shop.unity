@@ -4448,7 +4448,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 454124395}
-  health: 0
   monsterObject: {fileID: 1895961717}
 --- !u!114 &454124395
 MonoBehaviour:
@@ -12328,12 +12327,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 1535270415050945640, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_RequestedTrackingOriginMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3115292631596432376, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_RenderPostProcessing
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3755023497685003746, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4236523085834320165, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IgnoreTrackingState
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4356456892009499901, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
@@ -12382,6 +12389,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4838881153480763383, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_RenderPostProcessing
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6010792718146615127, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IgnoreTrackingState
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6482921815040739407, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IgnoreTrackingState
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6947604102996551011, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
@@ -15171,6 +15186,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ec1c7f08cee25346b436144b86dd7e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  item: {fileID: 0}
+  rate: 10
+  maxItems: 1
+  currentItems: 0
 --- !u!1 &1847919390
 GameObject:
   m_ObjectHideFlags: 0
@@ -16765,6 +16784,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b71a83475a8094459121d682e171bec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetObject: {fileID: 0}
 --- !u!1 &1989809024
 GameObject:
   m_ObjectHideFlags: 0
