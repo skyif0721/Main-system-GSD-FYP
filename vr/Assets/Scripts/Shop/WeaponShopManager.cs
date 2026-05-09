@@ -20,6 +20,11 @@ public class WeaponShopManager : MonoBehaviour
         public int price;
         public GameObject weaponObject;   // Original weapon in scene (template)
         public GameObject rowUI;          // The UI row for this weapon
+
+        [Tooltip("Local position of the grab handle relative to the weapon root (where the hand holds it)")]
+        public Vector3 handleOffset = Vector3.zero;
+        [Tooltip("Local rotation offset so weapon faces forward when held")]
+        public Vector3 handleRotation = Vector3.zero;
     }
 
     [Header("Weapon Data")]
@@ -39,10 +44,9 @@ public class WeaponShopManager : MonoBehaviour
     public Transform spawnPoint;
 
     // Per-weapon stats: (damage, maxDurability)
-    // Cheaper weapons = lower damage + lower durability (breaks faster)
     static readonly (int damage, int durability)[] WEAPON_STATS =
     {
-        (8,  4),   // 00 Dagger      - 20 coins  - weak, breaks in 4 hits
+        (8,  4),   // 00 Dagger      - 20 coins
         (12, 6),   // 01 Sword       - 40 coins
         (16, 8),   // 02 Long Sword  - 60 coins
         (20, 10),  // 03 Axe         - 80 coins
@@ -52,7 +56,8 @@ public class WeaponShopManager : MonoBehaviour
         (45, 22),  // 07 Hammer      - 180 coins
         (52, 26),  // 08 Warhammer   - 220 coins
         (60, 30),  // 09 Spear       - 260 coins
-        (70, 35),  // 10 Halberd     - 300 coins - strongest, lasts 35 hits
+        (70, 35),  // 10 Halberd     - 300 coins
+        (80, 40),  // 11 长剑        - 350 coins
     };
 
     private const string UNLOCK_KEY = "WeaponUnlocked_";
@@ -68,7 +73,6 @@ public class WeaponShopManager : MonoBehaviour
 
     void Start()
     {
-        // Auto-find right controller if not assigned
         if (rightControllerTransform == null)
         {
             GameObject rc = GameObject.Find("Right Controller");
@@ -88,8 +92,6 @@ public class WeaponShopManager : MonoBehaviour
             UpdateRow(i);
     }
 
-    // ── Row state machine ─────────────────────────────────────────────────────
-
     void UpdateRow(int i)
     {
         if (i < 0 || i >= weapons.Count) return;
@@ -100,19 +102,15 @@ public class WeaponShopManager : MonoBehaviour
         bool prevOwned= i == 0 || IsUnlocked(i - 1);
         bool canAfford= ShopManager.coins >= w.price;
 
-        // Sub-elements
         var statusTxt = w.rowUI.transform.Find("StatusText/Text")?.GetComponent<TextMeshProUGUI>();
         var buyBtn    = w.rowUI.transform.Find("BuyButton")?.GetComponent<Button>();
         var spawnBtn  = w.rowUI.transform.Find("SpawnButton")?.GetComponent<Button>();
         var rowImg    = w.rowUI.GetComponent<Image>();
-
-        // Update price text to always show current price
-        var priceTxt = w.rowUI.transform.Find("PriceText/Text")?.GetComponent<TextMeshProUGUI>();
+        var priceTxt  = w.rowUI.transform.Find("PriceText/Text")?.GetComponent<TextMeshProUGUI>();
         if (priceTxt != null) priceTxt.text = $"{w.price} coins";
 
         if (owned)
         {
-            // ── OWNED: hide BUY, show SPAWN ───────────────────────────────────
             if (rowImg    != null) rowImg.color = C_OWNED;
             if (statusTxt != null) { statusTxt.text = "OWNED"; statusTxt.color = new Color(0.3f, 1f, 0.3f); }
             if (buyBtn    != null) buyBtn.gameObject.SetActive(false);
@@ -122,22 +120,19 @@ public class WeaponShopManager : MonoBehaviour
                 spawnBtn.onClick.RemoveAllListeners();
                 int idx = i;
                 spawnBtn.onClick.AddListener(() => SpawnWeapon(idx));
-                // Orange color
                 var spawnImg = spawnBtn.GetComponent<Image>();
                 if (spawnImg != null) spawnImg.color = C_BTN_SPAWN;
             }
         }
         else if (!prevOwned)
         {
-            // ── LOCKED ────────────────────────────────────────────────────────
             if (rowImg    != null) rowImg.color = C_LOCKED;
             if (statusTxt != null) { statusTxt.text = "LOCKED"; statusTxt.color = new Color(0.5f, 0.5f, 0.5f); }
-            if (buyBtn    != null) { buyBtn.gameObject.SetActive(false); }
+            if (buyBtn    != null) buyBtn.gameObject.SetActive(false);
             if (spawnBtn  != null) spawnBtn.gameObject.SetActive(false);
         }
         else if (!canAfford)
         {
-            // ── CAN'T AFFORD ──────────────────────────────────────────────────
             if (rowImg    != null) rowImg.color = C_POOR;
             if (statusTxt != null) { statusTxt.text = "Fight for more!"; statusTxt.color = new Color(1f, 0.4f, 0.1f); }
             if (buyBtn    != null)
@@ -151,9 +146,8 @@ public class WeaponShopManager : MonoBehaviour
         }
         else
         {
-            // ── CAN BUY ───────────────────────────────────────────────────────
             if (rowImg    != null) rowImg.color = C_AFFORD;
-            if (statusTxt != null) { statusTxt.text = ""; }
+            if (statusTxt != null) statusTxt.text = "";
             if (buyBtn    != null)
             {
                 buyBtn.gameObject.SetActive(true);
@@ -168,8 +162,6 @@ public class WeaponShopManager : MonoBehaviour
         }
     }
 
-    // ── Buy ───────────────────────────────────────────────────────────────────
-
     public void BuyWeapon(int i)
     {
         if (i < 0 || i >= weapons.Count) return;
@@ -177,16 +169,8 @@ public class WeaponShopManager : MonoBehaviour
         if (IsUnlocked(i)) return;
 
         bool prevOwned = i == 0 || IsUnlocked(i - 1);
-        if (!prevOwned)
-        {
-            ShowStatus("Unlock previous weapon first!");
-            return;
-        }
-        if (ShopManager.coins < w.price)
-        {
-            ShowStatus($"Need {w.price - ShopManager.coins} more coins!");
-            return;
-        }
+        if (!prevOwned) { ShowStatus("Unlock previous weapon first!"); return; }
+        if (ShopManager.coins < w.price) { ShowStatus($"Need {w.price - ShopManager.coins} more coins!"); return; }
 
         ShopManager.coins -= w.price;
         PlayerPrefs.SetInt("SavedCoins", ShopManager.coins);
@@ -194,28 +178,20 @@ public class WeaponShopManager : MonoBehaviour
         PlayerPrefs.Save();
 
         ShowStatus($"{w.weaponName} unlocked! Press SPAWN to equip.");
-        Debug.Log($"[WeaponShop] Bought {w.weaponName}. Coins left: {ShopManager.coins}");
-
         RefreshUI();
     }
-
-    // ── Spawn ─────────────────────────────────────────────────────────────────
 
     public void SpawnWeapon(int i)
     {
         if (i < 0 || i >= weapons.Count) return;
         WeaponEntry w = weapons[i];
         if (!IsUnlocked(i)) return;
-        if (w.weaponObject == null)
-        {
-            ShowStatus($"Weapon object not found for {w.weaponName}!");
-            return;
-        }
+        if (w.weaponObject == null) { ShowStatus($"Weapon object not found for {w.weaponName}!"); return; }
 
-        // ── Spawn position: right controller or camera fallback ───────────────
+        // ── Spawn position ────────────────────────────────────────────────────
         Vector3 spawnPos;
         Quaternion spawnRot;
-        
+
         if (spawnPoint != null)
         {
             spawnPos = spawnPoint.position;
@@ -236,20 +212,14 @@ public class WeaponShopManager : MonoBehaviour
             spawnRot = Quaternion.identity;
         }
 
-        // ── Check if already exists ───────────────────────────────────────────
+        // ── Re-summon existing ────────────────────────────────────────────────
         GameObject existing = GameObject.Find($"{w.weaponName}_Spawned");
         if (existing != null)
         {
             existing.transform.position = spawnPos;
             existing.transform.rotation = spawnRot;
-            
             Rigidbody existingRb = existing.GetComponent<Rigidbody>();
-            if (existingRb != null)
-            {
-                existingRb.velocity = Vector3.zero;
-                existingRb.angularVelocity = Vector3.zero;
-            }
-            
+            if (existingRb != null) { existingRb.velocity = Vector3.zero; existingRb.angularVelocity = Vector3.zero; }
             ShowStatus($"{w.weaponName} summoned!");
             return;
         }
@@ -258,53 +228,102 @@ public class WeaponShopManager : MonoBehaviour
         GameObject spawned = Object.Instantiate(w.weaponObject, spawnPos, spawnRot);
         spawned.name = $"{w.weaponName}_Spawned";
         spawned.SetActive(true);
-
-        // ── Fix scale: weapons are stored at scale 100 — normalise to 1 ───────
-        // The original weapons have localScale 100,100,100 (model units → metres)
-        // We keep that scale so the mesh looks right, but ensure it's not parented
         spawned.transform.SetParent(null);
-        // Scale is inherited from original — keep as-is (already correct world size)
 
         // ── Rigidbody ─────────────────────────────────────────────────────────
         Rigidbody rb = spawned.GetComponent<Rigidbody>();
         if (rb == null) rb = spawned.AddComponent<Rigidbody>();
-        rb.useGravity    = true;
-        rb.isKinematic   = false;
-        rb.mass          = 0.5f;
-        rb.drag          = 1f;
-        rb.angularDrag   = 2f;
+        rb.useGravity  = true;
+        rb.isKinematic = false;
+        rb.mass        = 0.5f;
+        rb.drag        = 1f;
+        rb.angularDrag = 2f;
 
-        // ── Collider (trigger for hit detection + solid for grab) ─────────────
-        // Remove any existing colliders first to avoid duplicates
-        foreach (var c in spawned.GetComponents<Collider>())
+        // ── Colliders: remove all old ones, add clean set ─────────────────────
+        foreach (var c in spawned.GetComponentsInChildren<Collider>())
             Object.DestroyImmediate(c);
 
-        // Solid capsule for physics/grab
-        CapsuleCollider physCol = spawned.AddComponent<CapsuleCollider>();
-        physCol.isTrigger  = false;
-        physCol.direction  = 2; // Z-axis (along blade)
-        physCol.radius     = 0.015f;
-        physCol.height     = 0.6f;
-        physCol.center     = new Vector3(0, 0, 0);
+        // Get the actual mesh bounds to size colliders correctly
+        MeshFilter mf = spawned.GetComponentInChildren<MeshFilter>();
+        Bounds meshBounds = mf != null ? mf.sharedMesh.bounds : new Bounds(Vector3.zero, Vector3.one * 0.3f);
 
-        // Trigger for hit detection (slightly larger)
+        // Determine blade axis from mesh extents (longest axis = blade direction)
+        Vector3 size = meshBounds.size;
+        int bladeAxis = 1; // Y by default
+        if (size.x > size.y && size.x > size.z) bladeAxis = 0;
+        else if (size.z > size.y) bladeAxis = 2;
+
+        float bladeLength = bladeAxis == 0 ? size.x : (bladeAxis == 1 ? size.y : size.z);
+        float bladeRadius = Mathf.Min(size.x, size.y, size.z) * 0.35f;
+        bladeRadius = Mathf.Clamp(bladeRadius, 0.01f, 0.05f);
+
+        // Scale correction: if weapon was at scale 100, mesh bounds are in local units
+        Transform spawnedT = spawned.transform;
+        float scaleFactor = spawnedT.lossyScale.x;
+
+        // Solid capsule for physics/grab — tight around the blade
+        CapsuleCollider physCol = spawned.AddComponent<CapsuleCollider>();
+        physCol.isTrigger = false;
+        physCol.direction = bladeAxis;
+        physCol.radius    = bladeRadius;
+        physCol.height    = bladeLength;
+        physCol.center    = meshBounds.center;
+
+        // Trigger capsule for hit detection — slightly larger, blade only (upper 70%)
         CapsuleCollider hitCol = spawned.AddComponent<CapsuleCollider>();
         hitCol.isTrigger  = true;
-        hitCol.direction  = 2;
-        hitCol.radius     = 0.025f;
-        hitCol.height     = 0.65f;
-        hitCol.center     = new Vector3(0, 0, 0);
+        hitCol.direction  = bladeAxis;
+        hitCol.radius     = bladeRadius * 1.2f;
+        hitCol.height     = bladeLength * 0.7f;
+        // Offset toward blade tip (away from handle)
+        Vector3 hitCenter = meshBounds.center;
+        float tipOffset = bladeLength * 0.15f;
+        if (bladeAxis == 0) hitCenter.x += tipOffset;
+        else if (bladeAxis == 1) hitCenter.y += tipOffset;
+        else hitCenter.z += tipOffset;
+        hitCol.center = hitCenter;
+
+        // ── Attach Transform (handle / grip point) ────────────────────────────
+        // Create a child GameObject at the handle position so the weapon
+        // snaps correctly to the player's hand when grabbed
+        GameObject attachGO = new GameObject("AttachPoint");
+        attachGO.transform.SetParent(spawned.transform);
+        // Handle is at the bottom of the blade (opposite end from tip)
+        Vector3 handleLocal = meshBounds.center;
+        float handleOffset = bladeLength * 0.35f;
+        if (bladeAxis == 0) handleLocal.x -= handleOffset;
+        else if (bladeAxis == 1) handleLocal.y -= handleOffset;
+        else handleLocal.z -= handleOffset;
+        attachGO.transform.localPosition = handleLocal + w.handleOffset;
+        attachGO.transform.localEulerAngles = w.handleRotation;
+
+        // ── Find attach point from spawned weapon ─────────────────────────────
+        // Use the manually placed child attach point (named "GameObject", "w", or "default")
+        // that the designer set up in the scene template weapon.
+        Transform spawnedAttach = spawned.transform.Find("GameObject");
+        if (spawnedAttach == null) spawnedAttach = spawned.transform.Find("w");
+        if (spawnedAttach == null) spawnedAttach = spawned.transform.Find("default");
+        // Fall back to the auto-generated one if no manual point exists
+        if (spawnedAttach == null) spawnedAttach = attachGO.transform;
 
         // ── XRGrabInteractable ────────────────────────────────────────────────
         XRGrabInteractable grab = spawned.GetComponent<XRGrabInteractable>();
         if (grab == null) grab = spawned.AddComponent<XRGrabInteractable>();
-        grab.throwOnDetach          = true;
-        grab.velocityScale          = 1f;
-        grab.angularVelocityScale   = 1f;
-        grab.throwSmoothingDuration = 0.1f;
-        grab.throwVelocityScale     = 1.5f;
+        grab.attachTransform          = spawnedAttach;
+        grab.movementType             = XRBaseInteractable.MovementType.VelocityTracking; // Follows hand freely
+        grab.trackPosition            = true;
+        grab.trackRotation            = false;   // No spinning when held
+        grab.throwOnDetach            = true;
+        grab.throwSmoothingDuration   = 0.1f;
+        grab.throwVelocityScale       = 1.5f;
+        grab.useDynamicAttach         = false;
 
-        // ── WeaponStats (damage + durability) ─────────────────────────────────
+        // Freeze rotation so weapon doesn't tumble when dropped
+        rb.drag        = 2f;
+        rb.angularDrag = 5f;
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+        // ── WeaponStats ───────────────────────────────────────────────────────
         WeaponStats stats = spawned.GetComponent<WeaponStats>();
         if (stats == null) stats = spawned.AddComponent<WeaponStats>();
         var (dmg, dur) = i < WEAPON_STATS.Length
@@ -312,14 +331,11 @@ public class WeaponShopManager : MonoBehaviour
             : (10 + i * 5, 5 + i * 2);
         stats.SetStats(w.weaponName, i, dmg, dur);
 
-        // ── Tag as Weapon ─────────────────────────────────────────────────────
         spawned.tag = "Weapon";
 
         ShowStatus($"{w.weaponName} spawned! DMG:{dmg}  DUR:{dur} hits");
         Debug.Log($"[WeaponShop] Spawned {w.weaponName} | DMG:{dmg} DUR:{dur} at {spawnPos}");
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     public bool IsUnlocked(int i) => PlayerPrefs.GetInt(UNLOCK_KEY + i, 0) == 1;
 
