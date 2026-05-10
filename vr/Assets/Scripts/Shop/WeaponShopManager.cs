@@ -216,112 +216,94 @@ public class WeaponShopManager : MonoBehaviour
         GameObject existing = GameObject.Find($"{w.weaponName}_Spawned");
         if (existing != null)
         {
+            // If it's currently being held, don't yank it out of the hand —
+            // just notify the player.
+            XRGrabInteractable existingGrab = existing.GetComponent<XRGrabInteractable>();
+            if (existingGrab != null && existingGrab.isSelected)
+            {
+                ShowStatus($"{w.weaponName} is already in your hand!");
+                return;
+            }
+            existing.transform.SetParent(null);
             existing.transform.position = spawnPos;
             existing.transform.rotation = spawnRot;
+            existing.SetActive(true);
             Rigidbody existingRb = existing.GetComponent<Rigidbody>();
-            if (existingRb != null) { existingRb.velocity = Vector3.zero; existingRb.angularVelocity = Vector3.zero; }
+            if (existingRb != null)
+            {
+                existingRb.velocity = Vector3.zero;
+                existingRb.angularVelocity = Vector3.zero;
+            }
             ShowStatus($"{w.weaponName} summoned!");
             return;
         }
 
-        // ── Instantiate ───────────────────────────────────────────────────────
+        // ── Instantiate (clone the scene template AS-IS) ──────────────────────
+        // The scene weapons are already configured with the correct Rigidbody,
+        // Collider, XRGrabInteractable + attachTransform. We trust those values
+        // and only adjust pose / per-instance data (stats, name, tag).
         GameObject spawned = Object.Instantiate(w.weaponObject, spawnPos, spawnRot);
         spawned.name = $"{w.weaponName}_Spawned";
         spawned.SetActive(true);
         spawned.transform.SetParent(null);
 
-        // ── Rigidbody ─────────────────────────────────────────────────────────
+        // ── Rigidbody: ensure non-kinematic so player can pick it up ──────────
         Rigidbody rb = spawned.GetComponent<Rigidbody>();
         if (rb == null) rb = spawned.AddComponent<Rigidbody>();
         rb.useGravity  = true;
         rb.isKinematic = false;
-        rb.mass        = 0.5f;
-        rb.drag        = 1f;
-        rb.angularDrag = 2f;
+        if (rb.mass <= 0f) rb.mass = 0.5f;
 
-        // ── Colliders: remove all old ones, add clean set ─────────────────────
+        // ── Ensure there is at least one non-trigger collider ─────────────────
+        // (the scene templates already have one; this is just a safety net so
+        //  spawned weapons are always grabbable / movable).
+        bool hasSolidCollider = false;
         foreach (var c in spawned.GetComponentsInChildren<Collider>())
-            Object.DestroyImmediate(c);
+        {
+            if (!c.isTrigger) { hasSolidCollider = true; break; }
+        }
+        if (!hasSolidCollider)
+        {
+            // Build a box collider sized to the renderer bounds (in local space).
+            Renderer rend = spawned.GetComponentInChildren<Renderer>();
+            BoxCollider box = spawned.AddComponent<BoxCollider>();
+            if (rend != null)
+            {
+                // Convert world-space renderer bounds into the spawned object's local space
+                Vector3 lossy = spawned.transform.lossyScale;
+                Vector3 worldSize = rend.bounds.size;
+                box.size = new Vector3(
+                    lossy.x != 0f ? worldSize.x / lossy.x : 1f,
+                    lossy.y != 0f ? worldSize.y / lossy.y : 1f,
+                    lossy.z != 0f ? worldSize.z / lossy.z : 1f);
+                box.center = spawned.transform.InverseTransformPoint(rend.bounds.center);
+            }
+        }
 
-        // Get the actual mesh bounds to size colliders correctly
-        MeshFilter mf = spawned.GetComponentInChildren<MeshFilter>();
-        Bounds meshBounds = mf != null ? mf.sharedMesh.bounds : new Bounds(Vector3.zero, Vector3.one * 0.3f);
-
-        // Determine blade axis from mesh extents (longest axis = blade direction)
-        Vector3 size = meshBounds.size;
-        int bladeAxis = 1; // Y by default
-        if (size.x > size.y && size.x > size.z) bladeAxis = 0;
-        else if (size.z > size.y) bladeAxis = 2;
-
-        float bladeLength = bladeAxis == 0 ? size.x : (bladeAxis == 1 ? size.y : size.z);
-        float bladeRadius = Mathf.Min(size.x, size.y, size.z) * 0.35f;
-        bladeRadius = Mathf.Clamp(bladeRadius, 0.01f, 0.05f);
-
-        // Scale correction: if weapon was at scale 100, mesh bounds are in local units
-        Transform spawnedT = spawned.transform;
-        float scaleFactor = spawnedT.lossyScale.x;
-
-        // Solid capsule for physics/grab — tight around the blade
-        CapsuleCollider physCol = spawned.AddComponent<CapsuleCollider>();
-        physCol.isTrigger = false;
-        physCol.direction = bladeAxis;
-        physCol.radius    = bladeRadius;
-        physCol.height    = bladeLength;
-        physCol.center    = meshBounds.center;
-
-        // Trigger capsule for hit detection — slightly larger, blade only (upper 70%)
-        CapsuleCollider hitCol = spawned.AddComponent<CapsuleCollider>();
-        hitCol.isTrigger  = true;
-        hitCol.direction  = bladeAxis;
-        hitCol.radius     = bladeRadius * 1.2f;
-        hitCol.height     = bladeLength * 0.7f;
-        // Offset toward blade tip (away from handle)
-        Vector3 hitCenter = meshBounds.center;
-        float tipOffset = bladeLength * 0.15f;
-        if (bladeAxis == 0) hitCenter.x += tipOffset;
-        else if (bladeAxis == 1) hitCenter.y += tipOffset;
-        else hitCenter.z += tipOffset;
-        hitCol.center = hitCenter;
-
-        // ── Attach Transform (handle / grip point) ────────────────────────────
-        // Create a child GameObject at the handle position so the weapon
-        // snaps correctly to the player's hand when grabbed
-        GameObject attachGO = new GameObject("AttachPoint");
-        attachGO.transform.SetParent(spawned.transform);
-        // Handle is at the bottom of the blade (opposite end from tip)
-        Vector3 handleLocal = meshBounds.center;
-        float handleOffset = bladeLength * 0.35f;
-        if (bladeAxis == 0) handleLocal.x -= handleOffset;
-        else if (bladeAxis == 1) handleLocal.y -= handleOffset;
-        else handleLocal.z -= handleOffset;
-        attachGO.transform.localPosition = handleLocal + w.handleOffset;
-        attachGO.transform.localEulerAngles = w.handleRotation;
-
-        // ── Find attach point from spawned weapon ─────────────────────────────
-        // Use the manually placed child attach point (named "GameObject", "w", or "default")
-        // that the designer set up in the scene template weapon.
-        Transform spawnedAttach = spawned.transform.Find("GameObject");
-        if (spawnedAttach == null) spawnedAttach = spawned.transform.Find("w");
-        if (spawnedAttach == null) spawnedAttach = spawned.transform.Find("default");
-        // Fall back to the auto-generated one if no manual point exists
-        if (spawnedAttach == null) spawnedAttach = attachGO.transform;
-
-        // ── XRGrabInteractable ────────────────────────────────────────────────
+        // ── XRGrabInteractable: ensure present + has an attachTransform ───────
         XRGrabInteractable grab = spawned.GetComponent<XRGrabInteractable>();
         if (grab == null) grab = spawned.AddComponent<XRGrabInteractable>();
-        grab.attachTransform          = spawnedAttach;
-        grab.movementType             = XRBaseInteractable.MovementType.VelocityTracking; // Follows hand freely
-        grab.trackPosition            = true;
-        grab.trackRotation            = false;   // No spinning when held
-        grab.throwOnDetach            = true;
-        grab.throwSmoothingDuration   = 0.1f;
-        grab.throwVelocityScale       = 1.5f;
-        grab.useDynamicAttach         = false;
 
-        // Freeze rotation so weapon doesn't tumble when dropped
-        rb.drag        = 2f;
-        rb.angularDrag = 5f;
-        rb.constraints = RigidbodyConstraints.FreezeRotation;
+        // If the template didn't carry an attachTransform, try to find one
+        // by name among the children (designer-placed grip).
+        if (grab.attachTransform == null)
+        {
+            Transform spawnedAttach = spawned.transform.Find("GameObject");
+            if (spawnedAttach == null) spawnedAttach = spawned.transform.Find("w");
+            if (spawnedAttach == null) spawnedAttach = spawned.transform.Find("default");
+            if (spawnedAttach != null) grab.attachTransform = spawnedAttach;
+        }
+
+        // Make weapons feel natural when held: rotation follows the wrist,
+        // weapon snaps to attach point, no leftover frozen-rotation constraints.
+        grab.trackPosition       = true;
+        grab.trackRotation       = true;
+        grab.movementType        = UnityEngine.XR.Interaction.Toolkit.Interactables.XRBaseInteractable.MovementType.VelocityTracking;
+        grab.throwOnDetach       = true;
+        grab.useDynamicAttach    = false;
+        grab.matchAttachPosition = true;
+        grab.matchAttachRotation = true;
+        rb.constraints           = RigidbodyConstraints.None;
 
         // ── WeaponStats ───────────────────────────────────────────────────────
         WeaponStats stats = spawned.GetComponent<WeaponStats>();

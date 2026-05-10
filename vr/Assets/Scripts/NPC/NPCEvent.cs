@@ -1,3 +1,4 @@
+using Ink.Parsed;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,7 +64,7 @@ public class NPCEvent : MonoBehaviour
 
     private void OnTriggerEnter(Collider otherCollider)
     {
-        if (otherCollider.CompareTag("Player"))
+        if (otherCollider.CompareTag("Player") || otherCollider.name.Contains("XR Origin") || otherCollider.GetComponentInParent<PlayerStats>() != null)
         {
             playerIsNear = true;
             talkableMark.SetActive(true);
@@ -72,7 +73,7 @@ public class NPCEvent : MonoBehaviour
 
     private void OnTriggerExit(Collider otherCollider)
     {
-        if (otherCollider.CompareTag("Player"))
+        if (otherCollider.CompareTag("Player") || otherCollider.name.Contains("XR Origin") || otherCollider.GetComponentInParent<PlayerStats>() != null)
         {
             playerIsNear = false;
             talkableMark.SetActive(false);

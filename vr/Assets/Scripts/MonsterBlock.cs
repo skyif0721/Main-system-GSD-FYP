@@ -111,6 +111,9 @@ public class MonsterStat : MonoBehaviour
         health -= damage;
         Debug.Log("MonsterBlock took " + damage + " damage. Health remaining: " + health);
 
+        // Floating "-XX HP" text above the monster
+        DamagePopupSpawner.Spawn(transform, damage);
+
         if (health > 0 && animator != null)
         {
             animator.SetTrigger("Hit");
