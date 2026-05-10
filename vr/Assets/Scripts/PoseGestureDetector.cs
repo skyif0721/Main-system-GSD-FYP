@@ -50,6 +50,8 @@ public class PoseGestureDetector : MonoBehaviour
     public float headMaxSpeedForDetection = 0.6f;
 
     [Header("Wrist flourish detection")]
+    [Tooltip("Master switch – disable to skip wrist detection entirely.")]
+    public bool  wristDetectionEnabled = false;
     [Tooltip("Required angular speed of the wrist (deg/s) over the sample window.")]
     public float wristAngularSpeed = 450f;
     [Tooltip("How long the rapid spin must be sustained, seconds.")]
@@ -183,11 +185,14 @@ public class PoseGestureDetector : MonoBehaviour
         if (Time.time < _globalLockUntil) return;
         if (headMoving)                   return;
 
-        // Wrist flourish — high angular speed AND low linear speed (otherwise it's a swing)
-        TickWrist(dt, leftAngSpeed, rightAngSpeed,
-                  leftVel.magnitude, rightVel.magnitude,
-                  leftHolding, rightHolding);
-        if (Time.time < _globalLockUntil) return;
+        // Wrist flourish — disabled by default (was causing too many false positives)
+        if (wristDetectionEnabled)
+        {
+            TickWrist(dt, leftAngSpeed, rightAngSpeed,
+                      leftVel.magnitude, rightVel.magnitude,
+                      leftHolding, rightHolding);
+            if (Time.time < _globalLockUntil) return;
+        }
 
         // Split vs Rapier per controller — pick the dominant direction so a single
         // swing only fires one of them.

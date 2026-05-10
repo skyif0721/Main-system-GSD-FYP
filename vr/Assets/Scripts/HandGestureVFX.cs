@@ -20,7 +20,7 @@ public static class HandGestureVFX
     /// Play a hand-anchored VFX with a label and color.
     /// </summary>
     public static void Play(Transform anchor, string label, Color color,
-                             float duration = 1.0f, float size = 0.6f)
+                             float duration = 1.0f, float size = 0.25f)
     {
         if (anchor == null) return;
         EnsureShaders();
@@ -31,43 +31,43 @@ public static class HandGestureVFX
         root.transform.localPosition = Vector3.zero;
         root.transform.localRotation = Quaternion.identity;
 
-        // 1. Glow sphere
+        // 1. Glow sphere (small)
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.name = "Glow";
         sphere.transform.SetParent(root.transform, false);
         sphere.transform.localPosition = Vector3.zero;
-        sphere.transform.localScale    = Vector3.one * 0.05f;
+        sphere.transform.localScale    = Vector3.one * 0.02f;
         Object.Destroy(sphere.GetComponent<Collider>());
 
         Material sphereMat = new Material(_opaqueShader);
         ConfigureFadeMaterial(sphereMat, color, 0.65f);
         sphere.GetComponent<Renderer>().material = sphereMat;
 
-        // 2. Expanding ring (a flattened cylinder)
+        // 2. Expanding ring (a flattened cylinder, small)
         GameObject ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         ring.name = "Ring";
         ring.transform.SetParent(root.transform, false);
         ring.transform.localPosition = Vector3.zero;
-        ring.transform.localScale    = new Vector3(0.05f, 0.005f, 0.05f);
+        ring.transform.localScale    = new Vector3(0.02f, 0.002f, 0.02f);
         Object.Destroy(ring.GetComponent<Collider>());
 
         Material ringMat = new Material(_opaqueShader);
         ConfigureFadeMaterial(ringMat, color, 0.85f);
         ring.GetComponent<Renderer>().material = ringMat;
 
-        // 3. Floating label
+        // 3. Floating label (smaller, closer to hand)
         GameObject labelGO = new GameObject("Label");
         labelGO.transform.SetParent(root.transform, false);
-        labelGO.transform.localPosition = new Vector3(0f, 0.18f, 0f);
+        labelGO.transform.localPosition = new Vector3(0f, 0.08f, 0f);
 
         TextMeshPro labelTmp = labelGO.AddComponent<TextMeshPro>();
         labelTmp.text = label;
         labelTmp.alignment = TextAlignmentOptions.Center;
-        labelTmp.fontSize = 2f;
+        labelTmp.fontSize = 1f;
         labelTmp.fontStyle = FontStyles.Bold;
         labelTmp.color = color;
         RectTransform rt = labelTmp.rectTransform;
-        rt.sizeDelta = new Vector2(2f, 0.5f);
+        rt.sizeDelta = new Vector2(1f, 0.25f);
 
         // 4. Particle burst — configure BEFORE Play()
         GameObject psGO = new GameObject("Particles");
@@ -79,24 +79,24 @@ public static class HandGestureVFX
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         var main = ps.main;
-        main.duration         = 0.4f;
+        main.duration         = 0.35f;
         main.loop             = false;
-        main.startLifetime    = 0.7f;
-        main.startSpeed       = 1.5f;
-        main.startSize        = 0.04f;
+        main.startLifetime    = 0.45f;
+        main.startSpeed       = 0.8f;
+        main.startSize        = 0.018f;
         main.startColor       = color;
-        main.maxParticles     = 60;
+        main.maxParticles     = 30;
         main.simulationSpace  = ParticleSystemSimulationSpace.World;
 
         var emit = ps.emission;
         emit.rateOverTime = 0;
         emit.SetBursts(new ParticleSystem.Burst[] {
-            new ParticleSystem.Burst(0f, 40)
+            new ParticleSystem.Burst(0f, 18)
         });
 
         var shape = ps.shape;
         shape.shapeType = ParticleSystemShapeType.Sphere;
-        shape.radius    = 0.02f;
+        shape.radius    = 0.01f;
 
         var psr = psGO.GetComponent<ParticleSystemRenderer>();
         Material partMat = new Material(_particleShader);
@@ -115,16 +115,13 @@ public static class HandGestureVFX
     {
         if (_opaqueShader == null)
         {
-            // Prefer URP, fall back to built-in
-            _opaqueShader = Shader.Find("Universal Render Pipeline/Unlit");
-            if (_opaqueShader == null) _opaqueShader = Shader.Find("Universal Render Pipeline/Lit");
+            // Use built-in Standard shader (works with both built-in and URP)
+            _opaqueShader = Shader.Find("Standard");
             if (_opaqueShader == null) _opaqueShader = Shader.Find("Unlit/Color");
-            if (_opaqueShader == null) _opaqueShader = Shader.Find("Standard");
         }
         if (_particleShader == null)
         {
-            _particleShader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            if (_particleShader == null) _particleShader = Shader.Find("Particles/Standard Unlit");
+            _particleShader = Shader.Find("Particles/Standard Unlit");
             if (_particleShader == null) _particleShader = Shader.Find("Sprites/Default");
             if (_particleShader == null) _particleShader = _opaqueShader;
         }
@@ -133,24 +130,21 @@ public static class HandGestureVFX
     static void ConfigureFadeMaterial(Material m, Color tint, float alpha)
     {
         Color c = tint; c.a = alpha;
+
+        // Built-in Standard shader transparent mode
+        if (m.HasProperty("_Mode"))
+        {
+            m.SetFloat("_Mode", 3f); // Transparent
+            m.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            m.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            m.SetInt("_ZWrite", 0);
+            m.DisableKeyword("_ALPHATEST_ON");
+            m.EnableKeyword("_ALPHABLEND_ON");
+            m.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            m.renderQueue = 3000;
+        }
+
         m.color = c;
-
-        // URP Unlit: control transparency via _Surface, _Blend, _BaseColor
-        if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", c);
-        if (m.HasProperty("_Surface"))   m.SetFloat("_Surface", 1f);   // 0 = Opaque, 1 = Transparent
-        if (m.HasProperty("_Blend"))     m.SetFloat("_Blend",   0f);   // 0 = Alpha
-        if (m.HasProperty("_ZWrite"))    m.SetFloat("_ZWrite",  0f);
-        if (m.HasProperty("_SrcBlend"))  m.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-        if (m.HasProperty("_DstBlend"))  m.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-
-        m.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-        m.DisableKeyword("_ALPHATEST_ON");
-        m.EnableKeyword("_ALPHABLEND_ON");
-
-        // Built-in fall-back ("Standard" shader)
-        if (m.HasProperty("_Mode")) m.SetFloat("_Mode", 3f);
-
-        m.renderQueue = 3000;
 
         if (m.HasProperty("_EmissionColor"))
         {
@@ -203,22 +197,22 @@ public class HandGestureFXRunner : MonoBehaviour
 
             if (_ring != null)
             {
-                float r = Mathf.Lerp(0.05f, _finalRingSize, u);
-                _ring.localScale = new Vector3(r, 0.003f + 0.005f * fade, r);
+                float r = Mathf.Lerp(0.02f, _finalRingSize, u);
+                _ring.localScale = new Vector3(r, 0.0015f + 0.0025f * fade, r);
                 if (_ringMat != null) SetTintAlpha(_ringMat, _color, fade * 0.85f);
             }
 
             if (_sphere != null)
             {
                 float pulse = Mathf.Sin(u * Mathf.PI);
-                float s = Mathf.Lerp(0.04f, 0.18f, pulse);
+                float s = Mathf.Lerp(0.018f, 0.07f, pulse);
                 _sphere.localScale = Vector3.one * s;
                 if (_sphereMat != null) SetTintAlpha(_sphereMat, _color, pulse * 0.75f);
             }
 
             if (_label != null)
             {
-                _label.transform.localPosition = new Vector3(0f, 0.18f + u * 0.15f, 0f);
+                _label.transform.localPosition = new Vector3(0f, 0.08f + u * 0.07f, 0f);
                 if (_camTransform != null)
                 {
                     Vector3 toCam = _camTransform.position - _label.transform.position;

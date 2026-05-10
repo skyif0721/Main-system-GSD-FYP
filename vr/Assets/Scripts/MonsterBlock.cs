@@ -114,6 +114,9 @@ public class MonsterStat : MonoBehaviour
         // Floating "-XX HP" text above the monster
         DamagePopupSpawner.Spawn(transform, damage);
 
+        // Visual hit feedback – red flash + impact spark burst
+        MonsterHitVFX.Play(this, damage);
+
         if (health > 0 && animator != null)
         {
             animator.SetTrigger("Hit");

@@ -85,6 +85,14 @@ public class GestureActionHandler : MonoBehaviour
         AutoFind();
     }
 
+    void Start()
+    {
+        // Make sure no defensive buff is still set from a previous play session
+        BlockState.Reset();
+        // Always start with the shield hidden – it only appears during a Block.
+        if (shieldVisual != null) shieldVisual.SetActive(false);
+    }
+
     void AutoFind()
     {
         if (leftController == null)
@@ -256,7 +264,7 @@ public class GestureActionHandler : MonoBehaviour
         SpawnVfx(wristFlourishVfxPrefab, hand.position, hand.rotation, 1.0f);
         HandGestureVFX.Play(hand,
             leftHand ? "Wrist L" : "Wrist R",
-            new Color(1f, 0.6f, 0.2f), 0.9f, 0.5f);
+            new Color(1f, 0.6f, 0.2f), 0.9f, 0.2f);
 
         DamageInSphere(hand.position, wristSingleRadius, wristSingleDamage, 0f);
         Debug.Log($"[Gesture] Wrist flourish ({(leftHand ? "L" : "R")}) at {hand.position}");
@@ -268,8 +276,8 @@ public class GestureActionHandler : MonoBehaviour
         SpawnVfx(wristFlourishVfxPrefab, origin, Quaternion.identity, 2.0f);
 
         Color c = new Color(1f, 0.4f, 0.8f);
-        if (leftController  != null) HandGestureVFX.Play(leftController,  "花手", c, 1.2f, 0.6f);
-        if (rightController != null) HandGestureVFX.Play(rightController, "花手", c, 1.2f, 0.6f);
+        if (leftController  != null) HandGestureVFX.Play(leftController,  "花手", c, 1.2f, 0.25f);
+        if (rightController != null) HandGestureVFX.Play(rightController, "花手", c, 1.2f, 0.25f);
 
         DamageInSphere(origin, wristBothRadius, wristBothDamage, wristBothKnockback);
         Debug.Log("[Gesture] Wrist flourish (BOTH) – AOE pulse");
@@ -279,6 +287,13 @@ public class GestureActionHandler : MonoBehaviour
     {
         Transform hand = leftHand ? leftController : rightController;
         if (hand == null) { Debug.LogWarning("[Gesture] No controller found for rapier."); return; }
+
+        // Deduct mana
+        if (playerStats != null && !playerStats.UseFireballMana())
+        {
+            Debug.Log("[Gesture] Rapier cancelled – not enough mana.");
+            return;
+        }
 
         GameObject prefab = rapierProjectilePrefab != null ? rapierProjectilePrefab : fireballPrefab;
         if (prefab == null)
@@ -296,7 +311,7 @@ public class GestureActionHandler : MonoBehaviour
 
         HandGestureVFX.Play(hand,
             leftHand ? "Rapier L" : "Rapier R",
-            new Color(0.4f, 0.9f, 1f), 0.6f, 0.35f);
+            new Color(0.4f, 0.9f, 1f), 0.6f, 0.15f);
 
         Vector3 forward = hand.forward;
         Vector3 spawnPos = hand.position + forward * 0.25f;
@@ -330,7 +345,7 @@ public class GestureActionHandler : MonoBehaviour
 
         HandGestureVFX.Play(hand,
             leftHand ? "Split L" : "Split R",
-            new Color(1f, 0.95f, 0.2f), 0.8f, 0.6f);
+            new Color(1f, 0.95f, 0.2f), 0.8f, 0.25f);
 
         // Cone damage: forward arc, range = splitConeRange, angle = splitConeAngleDeg
         Collider[] hits = Physics.OverlapSphere(origin, splitConeRange);
@@ -353,8 +368,8 @@ public class GestureActionHandler : MonoBehaviour
         SpawnVfx(qigongVfxPrefab, origin, Quaternion.identity, qigongBuffSeconds);
 
         Color qc = new Color(0.4f, 1f, 0.5f);
-        if (leftController  != null) HandGestureVFX.Play(leftController,  "氣功", qc, 1.5f, 0.5f);
-        if (rightController != null) HandGestureVFX.Play(rightController, "氣功", qc, 1.5f, 0.5f);
+        if (leftController  != null) HandGestureVFX.Play(leftController,  "氣功", qc, 1.5f, 0.22f);
+        if (rightController != null) HandGestureVFX.Play(rightController, "氣功", qc, 1.5f, 0.22f);
 
         // Heal player
         if (playerStats != null)
@@ -372,15 +387,15 @@ public class GestureActionHandler : MonoBehaviour
         StartCoroutine(QigongBuffCoroutine());
     }
 
+    // ── Qigong does NOT show the shield. It only grants a 50% damage-reduction
+    //    aura that does not interfere with a real Block press.
     IEnumerator QigongBuffCoroutine()
     {
-        bool prevBlocking = VRGestureResponse.PlayerIsBlocking;
-        float prevMult    = VRGestureResponse.BlockDamageMultiplier;
-        VRGestureResponse.PlayerIsBlocking      = true;
-        VRGestureResponse.BlockDamageMultiplier = 0.5f;   // 50 % damage taken during qigong buff
+        BlockState.QigongActive = true;
+        BlockState.Refresh();
         yield return new WaitForSeconds(qigongBuffSeconds);
-        VRGestureResponse.PlayerIsBlocking      = prevBlocking;
-        VRGestureResponse.BlockDamageMultiplier = prevBlocking ? prevMult : 1f;
+        BlockState.QigongActive = false;
+        BlockState.Refresh();
     }
 
     void DoKonanSignature()
@@ -390,13 +405,20 @@ public class GestureActionHandler : MonoBehaviour
             Debug.LogWarning("[Gesture] Konan SY needs a fireballPrefab assigned.");
             return;
         }
+
+        // Deduct mana
+        if (playerStats != null && !playerStats.UseFireballMana())
+        {
+            Debug.Log("[Gesture] Konan SY cancelled – not enough mana.");
+            return;
+        }
         Transform spawn = headTransform != null ? headTransform : transform;
         SpawnVfx(konanUltimateVfxPrefab, spawn.position + spawn.forward * 0.3f,
                  spawn.rotation, 2f);
 
         Color kc = new Color(1f, 0.3f, 0.1f);
-        if (leftController  != null) HandGestureVFX.Play(leftController,  "港南SY!", kc, 1.4f, 0.55f);
-        if (rightController != null) HandGestureVFX.Play(rightController, "港南SY!", kc, 1.4f, 0.55f);
+        if (leftController  != null) HandGestureVFX.Play(leftController,  "港南SY!", kc, 1.4f, 0.25f);
+        if (rightController != null) HandGestureVFX.Play(rightController, "港南SY!", kc, 1.4f, 0.25f);
 
         Vector3 forward = spawn.forward;
         for (int i = 0; i < konanProjectiles; i++)
@@ -420,28 +442,40 @@ public class GestureActionHandler : MonoBehaviour
         Debug.Log($"[Gesture] Konan SY signature – fired {konanProjectiles} projectiles");
     }
 
+    // We track the active Block state with a counter so re-triggering Block
+    // while one is already active just refreshes/extends the buff instead of
+    // stomping the qigong state or accidentally turning the shield off mid-buff.
+    Coroutine _activeBlockCo;
+
     void DoBlock()
     {
-        StartCoroutine(BlockCoroutine());
+        // If a block is already running, just restart it (fresh duration)
+        if (_activeBlockCo != null) StopCoroutine(_activeBlockCo);
+        _activeBlockCo = StartCoroutine(BlockCoroutine());
     }
 
     IEnumerator BlockCoroutine()
     {
+        // Show the shield (and keep it on for the whole block duration)
         if (shieldVisual != null) shieldVisual.SetActive(true);
 
         Color bc = new Color(0.3f, 0.7f, 1f);
-        if (leftController  != null) HandGestureVFX.Play(leftController,  "BLOCK", bc, blockHoldSeconds, 0.5f);
-        if (rightController != null) HandGestureVFX.Play(rightController, "BLOCK", bc, blockHoldSeconds, 0.5f);
+        if (leftController  != null) HandGestureVFX.Play(leftController,  "BLOCK", bc, blockHoldSeconds, 0.22f);
+        if (rightController != null) HandGestureVFX.Play(rightController, "BLOCK", bc, blockHoldSeconds, 0.22f);
 
-        bool prevBlocking = VRGestureResponse.PlayerIsBlocking;
-        float prevMult    = VRGestureResponse.BlockDamageMultiplier;
-        VRGestureResponse.PlayerIsBlocking      = true;
-        VRGestureResponse.BlockDamageMultiplier = 0f;
+        BlockState.BlockActive = true;
+        BlockState.Refresh();
         Debug.Log($"[Gesture] BLOCK – invulnerable for {blockHoldSeconds}s");
         yield return new WaitForSeconds(blockHoldSeconds);
-        VRGestureResponse.PlayerIsBlocking      = prevBlocking;
-        VRGestureResponse.BlockDamageMultiplier = prevBlocking ? prevMult : 1f;
-        if (shieldVisual != null) shieldVisual.SetActive(false);
+
+        BlockState.BlockActive = false;
+        BlockState.Refresh();
+
+        // Hide shield ONLY if no other defensive buff is active
+        if (shieldVisual != null && !BlockState.AnyActive)
+            shieldVisual.SetActive(false);
+
+        _activeBlockCo = null;
     }
 
     // ────────────────────────────────────────────────────────────────────────
