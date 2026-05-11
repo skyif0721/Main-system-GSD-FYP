@@ -3,14 +3,14 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 /// <summary>
-/// Detects the 9 supported gestures purely from controller pose / velocity.
+/// Detects supported gestures purely from controller pose / velocity.
 /// All velocities are computed RELATIVE TO THE HEAD (player's body) so
 /// walking / locomotion does not trigger false positives.
 /// Mutual-exclusion priority + a refractory window prevents one swing from
 /// being interpreted as multiple different gestures.
 ///
 /// Gesture priority (high → low):
-///     Block  >  Konan SY  >  Qigong  >  Wrist (both)  >  Wrist (single)
+///     Block  >  Konan SY  >  Wrist (both)  >  Wrist (single)
 ///   >  Rapier (single)  >  Split (single)
 ///
 /// "rapier" vs "split" is decided per-swing by which direction wins
@@ -74,9 +74,8 @@ public class PoseGestureDetector : MonoBehaviour
     [Tooltip("Downward speed must beat forward speed by at least this factor to be split.")]
     public float splitVsRapierRatio = 1.3f;
 
-    [Header("Qigong / Konan SY")]
+    [Header("Konan SY")]
     public float twoHandTogetherMaxDist = 0.45f;
-    public float qigongHoldDuration = 0.7f;
     public float konanHoldDuration  = 0.5f;
     public float konanAboveHead     = 0.25f;
 
@@ -92,7 +91,7 @@ public class PoseGestureDetector : MonoBehaviour
     Vector3   _lastLeftPos, _lastRightPos, _lastHeadPos;
     Quaternion _lastLeftRot, _lastRightRot;
     float _leftSpinAccumTime, _rightSpinAccumTime;
-    float _qigongHoldTime, _konanHoldTime, _blockHoldTime;
+    float _konanHoldTime, _blockHoldTime;
     float _globalLockUntil;
     readonly Dictionary<string, float> _lastFiredAt = new Dictionary<string, float>();
     bool _initialized;
@@ -176,10 +175,9 @@ public class PoseGestureDetector : MonoBehaviour
         }
 
         // ── Hold-style gestures evaluate every frame; they ignore refractory
-        //    so that block / qigong / konan can be entered at any time. ─────
+        //    so that block / konan can be entered at any time. ──────────────
         TickBlock(dt);
         TickKonanSY(dt, leftHolding, rightHolding);
-        TickQigong(dt, leftHolding, rightHolding, leftVel, rightVel);
 
         // Swing-style gestures are gated by the global refractory + walking
         if (Time.time < _globalLockUntil) return;
@@ -215,17 +213,6 @@ public class PoseGestureDetector : MonoBehaviour
         bool poseOk = IsKonanPose();
         _konanHoldTime = poseOk ? _konanHoldTime + dt : 0f;
         if (_konanHoldTime >= konanHoldDuration) { Fire("konan sy (both)"); _konanHoldTime = 0f; }
-    }
-
-    void TickQigong(float dt, bool leftHolding, bool rightHolding,
-                    Vector3 leftVel, Vector3 rightVel)
-    {
-        if (leftHolding || rightHolding) { _qigongHoldTime = 0f; return; }
-        bool poseOk = IsQigongPose() &&
-                      leftVel.magnitude  < 0.4f &&
-                      rightVel.magnitude < 0.4f;
-        _qigongHoldTime = poseOk ? _qigongHoldTime + dt : 0f;
-        if (_qigongHoldTime >= qigongHoldDuration) { Fire("qigong (both)"); _qigongHoldTime = 0f; }
     }
 
     void TickWrist(float dt, float leftAng, float rightAng,
@@ -312,21 +299,6 @@ public class PoseGestureDetector : MonoBehaviour
         float headY = headTransform.position.y;
         return leftController.position.y  > headY + konanAboveHead &&
                rightController.position.y > headY + konanAboveHead;
-    }
-
-    bool IsQigongPose()
-    {
-        float dist = Vector3.Distance(leftController.position, rightController.position);
-        if (dist > twoHandTogetherMaxDist) return false;
-        float headY = headTransform.position.y;
-        float midY = (leftController.position.y + rightController.position.y) * 0.5f;
-        if (midY > headY - 0.05f) return false;
-        if (midY < headY - 0.7f)  return false;
-
-        Vector3 fwd = headTransform.forward;
-        Vector3 mid = (leftController.position + rightController.position) * 0.5f;
-        Vector3 toMid = (mid - headTransform.position).normalized;
-        return Vector3.Dot(fwd, toMid) > 0.25f;
     }
 
     // ────────────────────────────────────────────────────────────────────────

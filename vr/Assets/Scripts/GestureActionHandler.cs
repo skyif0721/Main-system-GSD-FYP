@@ -20,7 +20,6 @@ using MiVRy;
 ///   split (L)    / 左劈         – left downward chop (cone damage)
 ///   split (R)    / 右劈         – right downward chop (cone damage)
 ///   wrist (both) / 花手         – dual flourish (big AOE around player)
-///   qigong (both)/ 氣功         – energy gathering (heal + buff)
 ///   konan sy (both) / 港南sy    – signature ultimate (fireball barrage)
 ///   Block (both) / 格擋         – guard pose (invulnerable while held)
 /// </summary>
@@ -42,7 +41,6 @@ public class GestureActionHandler : MonoBehaviour
     public GameObject shieldVisual;
     public GameObject wristFlourishVfxPrefab;
     public GameObject splitSlashVfxPrefab;
-    public GameObject qigongVfxPrefab;
     public GameObject konanUltimateVfxPrefab;
 
     [Header("Combat tuning")]
@@ -60,9 +58,6 @@ public class GestureActionHandler : MonoBehaviour
 
     public int   rapierDamage        = 60;
     public float rapierSpeed         = 18f;
-
-    public int   qigongHeal          = 30;
-    public float qigongBuffSeconds   = 5f;
 
     public int   konanProjectiles    = 8;
     public float konanSpreadDeg      = 35f;
@@ -202,15 +197,6 @@ public class GestureActionHandler : MonoBehaviour
             case "split(r)":
             case "右劈":
                 DoSplitChop(false);
-                break;
-
-            // ---- Qigong --------------------------------------------------------
-            case "qigongboth":
-            case "qigong(both)":
-            case "qigong":
-            case "氣功":
-            case "气功":
-                DoQigong();
                 break;
 
             // ---- Konan SY (signature ultimate) --------------------------------
@@ -362,42 +348,6 @@ public class GestureActionHandler : MonoBehaviour
         Debug.Log($"[Gesture] Split chop ({(leftHand ? "L" : "R")})");
     }
 
-    void DoQigong()
-    {
-        Vector3 origin = playerStats != null ? playerStats.transform.position : transform.position;
-        SpawnVfx(qigongVfxPrefab, origin, Quaternion.identity, qigongBuffSeconds);
-
-        Color qc = new Color(0.4f, 1f, 0.5f);
-        if (leftController  != null) HandGestureVFX.Play(leftController,  "氣功", qc, 1.5f, 0.22f);
-        if (rightController != null) HandGestureVFX.Play(rightController, "氣功", qc, 1.5f, 0.22f);
-
-        // Heal player
-        if (playerStats != null)
-        {
-            int before = playerStats.currentHealth;
-            playerStats.currentHealth = Mathf.Min(playerStats.maxHealth,
-                                                  playerStats.currentHealth + qigongHeal);
-            int healed = playerStats.currentHealth - before;
-            if (healed > 0)
-                DamagePopupSpawner.Spawn(playerStats.transform, -healed);   // negative = heal (green)
-            Debug.Log($"[Gesture] Qigong – healed {healed} HP (now {playerStats.currentHealth}/{playerStats.maxHealth})");
-        }
-
-        // Apply temporary block-buff (uses the same flag that PlayerStats reads)
-        StartCoroutine(QigongBuffCoroutine());
-    }
-
-    // ── Qigong does NOT show the shield. It only grants a 50% damage-reduction
-    //    aura that does not interfere with a real Block press.
-    IEnumerator QigongBuffCoroutine()
-    {
-        BlockState.QigongActive = true;
-        BlockState.Refresh();
-        yield return new WaitForSeconds(qigongBuffSeconds);
-        BlockState.QigongActive = false;
-        BlockState.Refresh();
-    }
-
     void DoKonanSignature()
     {
         if (fireballPrefab == null)
@@ -423,8 +373,8 @@ public class GestureActionHandler : MonoBehaviour
         Vector3 forward = spawn.forward;
         for (int i = 0; i < konanProjectiles; i++)
         {
-            float t = (konanProjectiles == 1) ? 0.5f : (float)i / (konanProjectiles - 1);
-            float yaw = Mathf.Lerp(-konanSpreadDeg, konanSpreadDeg, t);
+            float ti = (konanProjectiles == 1) ? 0.5f : (float)i / (konanProjectiles - 1);
+            float yaw = Mathf.Lerp(-konanSpreadDeg, konanSpreadDeg, ti);
             Quaternion rot = Quaternion.AngleAxis(yaw, Vector3.up) * Quaternion.LookRotation(forward);
             Vector3 dir = rot * Vector3.forward;
 
@@ -444,7 +394,7 @@ public class GestureActionHandler : MonoBehaviour
 
     // We track the active Block state with a counter so re-triggering Block
     // while one is already active just refreshes/extends the buff instead of
-    // stomping the qigong state or accidentally turning the shield off mid-buff.
+    // accidentally turning the shield off mid-buff.
     Coroutine _activeBlockCo;
 
     void DoBlock()
