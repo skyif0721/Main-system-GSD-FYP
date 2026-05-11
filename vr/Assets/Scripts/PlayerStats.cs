@@ -98,7 +98,7 @@ public class PlayerStats : MonoBehaviour
         UpdateHealthUI();
     }
 
-    private void UpdateHealthUI()
+    public void UpdateHealthUI()
     {
         if (healthSlider != null)
         {
@@ -161,7 +161,7 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    private void UpdateManaUI()
+    public void UpdateManaUI()
     {
         if (manaSlider != null)
         {

@@ -20,6 +20,7 @@ public class InputManager : MonoBehaviour
         if (context.started)
         {
             GameEventsManager.instance.inputEvents.InteractPressed();
+            Debug.Log("InteractPressed");
         }
     }
 

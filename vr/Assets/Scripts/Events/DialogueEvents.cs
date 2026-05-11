@@ -28,7 +28,8 @@ public class DialogueEvents
     public event Action onDialogueFinished;
     public void DialogueFinished()
     {
-        if (onDialogueFinished != null) {
+        if (onDialogueFinished != null)
+        {
             onDialogueFinished();
         }
     }

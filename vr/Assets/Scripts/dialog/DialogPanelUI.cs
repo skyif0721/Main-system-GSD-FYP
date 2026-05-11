@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Runtime.CompilerServices;
-//using UnityEditor.PackageManager.Requests;
+using UnityEditor.PackageManager.Requests;
 using Ink.Runtime;
 
-public class dialoguePanelUi : MonoBehaviour
+public class DialoguePanelUI : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private GameObject contentParent;
@@ -21,16 +21,23 @@ public class dialoguePanelUi : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventsManager.instance.dialogueEvents.onDialogueStarted += DialogueStarted;
-        GameEventsManager.instance.dialogueEvents.onDialogueFinished += DialogueFinished;
-        GameEventsManager.instance.dialogueEvents.onDisplayDialogue += DisplayDialogue;
+        if (GameEventsManager.instance?.dialogueEvents != null)
+        {
+            GameEventsManager.instance.dialogueEvents.onDialogueStarted += DialogueStarted;
+            GameEventsManager.instance.dialogueEvents.onDialogueFinished += DialogueFinished;
+            GameEventsManager.instance.dialogueEvents.onDisplayDialogue += DisplayDialogue;
+        }
     }
 
     private void OnDisable()
     {
-        GameEventsManager.instance.dialogueEvents.onDialogueStarted -= DialogueStarted;
-        GameEventsManager.instance.dialogueEvents.onDialogueFinished -= DialogueFinished;
-        GameEventsManager.instance.dialogueEvents.onDisplayDialogue -= DisplayDialogue;
+        if (GameEventsManager.instance?.dialogueEvents != null)
+        {
+            GameEventsManager.instance.dialogueEvents.onDialogueStarted -= DialogueStarted;
+            GameEventsManager.instance.dialogueEvents.onDialogueFinished -= DialogueFinished;
+            GameEventsManager.instance.dialogueEvents.onDisplayDialogue -= DisplayDialogue;
+        }
+        
     }
 
     private void DialogueStarted()
@@ -60,11 +67,11 @@ public class dialoguePanelUi : MonoBehaviour
             choiceButton.gameObject.SetActive(false);
         }
 
-        int choniceBuutonIndex = dialogueChoices.Count - 1;
+        int choniceButtonIndex = dialogueChoices.Count - 1;
         for (int inkChoiceIndex = 0; inkChoiceIndex < dialogueChoices.Count; inkChoiceIndex++)
         {
             Choice dialogueChoice = dialogueChoices[inkChoiceIndex];
-            DialogueChoiceButton choiceButton = choiceButtons[choniceBuutonIndex];
+            DialogueChoiceButton choiceButton = choiceButtons[choniceButtonIndex];
 
             choiceButton.gameObject.SetActive(true);
             choiceButton.SetChoiceText(dialogueChoice.text.Trim());
@@ -76,7 +83,7 @@ public class dialoguePanelUi : MonoBehaviour
                 GameEventsManager.instance.dialogueEvents.UpdateChoiceIndex(0);
             }
 
-            choniceBuutonIndex--;
+            choniceButtonIndex--;
         }
     }
 

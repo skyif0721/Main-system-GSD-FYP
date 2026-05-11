@@ -4,25 +4,35 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public int health = 100;
-    public int money = 0;
+    public string id;
+    public string playerName;
+    public int score;
+    public int health;
+    public int money;
+    public float[] position;
 
-    public void SavePlayer()
+    public GameObject player;
+    public GameObject playerDataManager;
+
+    public void PlayerSave()
     {
-        SaveSystem.SavePlayer(this);
+        this.id = "player_001";
+        this.playerName = "PlayerName";
+        this.score = ShopManager.coins / 10;
+        this.health = player.GetComponent<PlayerStats>().currentHealth;
+        this.money = ShopManager.coins;
+
+        // Save player position
+        this.position = new float[3];
+        this.position[0] = player.transform.position.x;
+        this.position[1] = player.transform.position.y;
+        this.position[2] = player.transform.position.z;
+
+        playerDataManager.GetComponent<PlayerDataManager>().SaveGame(id, name, score, health, money, position);
     }
 
-    public void LoadPlayer()
+    public void PlayerLoad()
     {
-        PlayerData data = SaveSystem.LoadPlayer();
-
-        health = data.health;
-        money = data.money;
-
-        Vector3 position;
-        position.x = data.position[0];
-        position.y = data.position[1];
-        position.z = data.position[2];
-        transform.position = position;
+        playerDataManager.GetComponent<PlayerDataManager>().LoadGame(id);
     }
 }

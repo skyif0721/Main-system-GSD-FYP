@@ -13,35 +13,40 @@ public class NPCEvent : MonoBehaviour
 
     [SerializeField] private GameObject talkableMark;
 
-    private @XRIDefaultInputActions inputActions;
+    private XRIDefaultInputActions inputActions;
+
+    bool inDialog;
 
     private bool playerIsNear = false;
 
     private void Awake()
     {
-        inputActions = new @XRIDefaultInputActions();
+        inputActions = new XRIDefaultInputActions();
         talkableMark.SetActive(false);
+        inDialog = false;
     }
 
     private void OnEnable()
     {
-        var gem = GameEventsManager.instance;
-        if (gem?.inputEvents != null)
+        if (GameEventsManager.instance?.inputEvents != null)
         {
-            gem.inputEvents.onInteractPressed += InteractPressed;
-        }
-        else
-        {
-            Debug.LogWarning($"{name}: GameEventsManager.instance or inputEvents is null in OnEnable.");
+            GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
         }
     }
 
     private void OnDisable()
     {
-        var gem = GameEventsManager.instance;
-        if (gem?.inputEvents != null)
+        if (GameEventsManager.instance?.inputEvents != null)
         {
-            gem.inputEvents.onInteractPressed -= InteractPressed;
+            GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
+        }
+    }
+
+    public void InteractButton()
+    {
+        if (!inDialog)
+        {
+            InteractPressed(InputEventContext.DEFAULT);
         }
     }
 
@@ -49,15 +54,18 @@ public class NPCEvent : MonoBehaviour
     {
         if (!playerIsNear || !inputEventContext.Equals(InputEventContext.DEFAULT))
         {
+            Debug.Log("!playerIsNear");
             return;
         }
 
-        if (!dialogueKnotName.Equals(""))
+        if (!string.IsNullOrEmpty(dialogueKnotName))
         {
+            inDialog = true;
             GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
         }
         else
         {
+            Debug.Log("dialogueKnotNameIsNull");
             GameEventsManager.instance.inputEvents.InteractPressed();
         }
     }
@@ -77,7 +85,7 @@ public class NPCEvent : MonoBehaviour
         {
             playerIsNear = false;
             talkableMark.SetActive(false);
+            inDialog = false;
         }
     }
-
 }

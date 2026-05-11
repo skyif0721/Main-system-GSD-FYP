@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-// using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +13,7 @@ public class ShopPanelUI : MonoBehaviour
     [SerializeField] private Canvas canvas;
     [SerializeField] private GameObject contentParent;
     [SerializeField] private Button ShopExitButton;
+    [SerializeField] private Button enterShop;
     [SerializeField] private GameObject buyableMark;
 
     [Header("Behavior")]
@@ -21,47 +21,24 @@ public class ShopPanelUI : MonoBehaviour
     public Camera uiCamera;
     public FacingTarget faceTarget = FacingTarget.Camera;
 
-    // [Header("Cinemachine")]
-    // public CinemachineInputAxisController inputAxisController;
-
-    // private @XRIDefaultInputActions inputActions;
-
     private bool playerIsNear = false;
     private bool inShop = false;
 
     Action targetAction;
 
-    private void Awake()
-    {
-        if (canvas == null) canvas = GetComponent<Canvas>();
-        if (contentParent != null) 
-            contentParent.SetActive(false);
-        else
-            Debug.LogWarning($"{name}: contentParent is not assigned.");
-       
-        if (!uiCamera) uiCamera = Camera.main;
-        inShop = false;
-        UpdateTargetAction();
-    }
-
     private void Start()
     {
         if (uiCamera == null) uiCamera = Camera.main;
+        if (canvas == null) canvas = GetComponent<Canvas>();
+        if (contentParent != null) contentParent.SetActive(false);
+
+        inShop = false;
+        UpdateTargetAction();
     }
 
     private void OnEnable()
     {
         ShopExitButton.onClick.AddListener(ExitShop);
-
-        var gem = GameEventsManager.instance;
-        if (gem?.inputEvents != null)
-        {
-            gem.inputEvents.onOpenShopPressed += OpenShopPressed;
-        }
-        else
-        {
-            Debug.LogWarning($"{name}: GameEventsManager.instance or inputEvents is null in OnEnable.");
-        }
 
         if (canvas != null)
         {
@@ -69,19 +46,11 @@ public class ShopPanelUI : MonoBehaviour
             if (uiCamera == null) uiCamera = Camera.main;
             canvas.worldCamera = uiCamera;
         }
-        else
-        {
-            Debug.LogError($"{name}: Canvas is missing. Assign it or add a Canvas component.");
-        }
 
         if (ShopExitButton != null)
         {
             ShopExitButton.onClick.RemoveAllListeners();
             ShopExitButton.onClick.AddListener(() => ExitShop());
-        }
-        else
-        {
-            Debug.LogError($"{name}: ShopExitButton is not assigned.");
         }
 
     }
@@ -90,18 +59,14 @@ public class ShopPanelUI : MonoBehaviour
     {
         if (ShopExitButton != null)
             ShopExitButton.onClick.RemoveListener(ExitShop);
-
-        var gem = GameEventsManager.instance;
-        if (gem?.inputEvents != null)
-            gem.inputEvents.onOpenShopPressed -= OpenShopPressed;
     }
-    
+
     private void UpdateTargetAction()
     {
         targetAction = faceTarget switch
         {
             FacingTarget.Camera => FaceCamera,
-            _ =>null
+            _ => null
         };
     }
 
@@ -125,30 +90,28 @@ public class ShopPanelUI : MonoBehaviour
         }
     }
 
-    public void OpenShopPressed(InputEventContext inputEventContext)
+    public void OpenShopPressed()
     {
-        if (!playerIsNear || !inputEventContext.Equals(InputEventContext.DEFAULT) || inShop)
+        if (!playerIsNear || inShop)
         {
             return;
         }
-
-        inShop = true;
 
         ShopEntered();
     }
 
     private void OnTriggerEnter(Collider otherCollider)
     {
-        if (otherCollider.CompareTag("Player"))
+        if (otherCollider.CompareTag("Player") || otherCollider.name.Contains("XR Origin") || otherCollider.GetComponentInParent<PlayerStats>() != null)
         {
             playerIsNear = true;
-            if(buyableMark) buyableMark.SetActive(true);
+            if (buyableMark) buyableMark.SetActive(true);
         }
     }
 
     private void OnTriggerExit(Collider otherCollider)
     {
-        if (otherCollider.CompareTag("Player"))
+        if (otherCollider.CompareTag("Player") || otherCollider.name.Contains("XR Origin") || otherCollider.GetComponentInParent<PlayerStats>() != null)
         {
             playerIsNear = false;
             if (buyableMark) buyableMark.SetActive(false);
@@ -157,15 +120,14 @@ public class ShopPanelUI : MonoBehaviour
 
     private void ShopEntered()
     {
-        if(contentParent) contentParent.SetActive(true);
-        // inputAxisController.enabled = false;
+        if (contentParent) contentParent.SetActive(true);
+        inShop = true;
     }
 
     private void ExitShop()
     {
         if (contentParent) contentParent.SetActive(false);
         inShop = false;
-        // inputAxisController.enabled = true;
     }
 }
 

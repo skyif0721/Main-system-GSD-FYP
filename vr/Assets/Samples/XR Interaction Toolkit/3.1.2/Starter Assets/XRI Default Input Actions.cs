@@ -95,7 +95,7 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
                     ""name"": ""Position"",
                     ""type"": ""Value"",
                     ""id"": ""1a9029f8-7a46-46b9-9eff-e9ae8365f611"",
-                    ""expectedControlType"": ""Vector3"",
+                    ""expectedControlType"": ""Quaternion"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -113,7 +113,7 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
                     ""name"": ""Is Tracked"",
                     ""type"": ""Button"",
                     ""id"": ""6bb4e248-e42b-47c3-b66c-79566508ca74"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -162,6 +162,15 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""c6b2fe82-ba04-4a1b-88c1-2925c0aef601"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -406,6 +415,28 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
                     ""action"": ""Eye Gaze Is Tracked"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""342fd6b7-4af9-4ecd-9b14-bf8d091773c5"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""50e452df-32fd-4fb9-964f-dcbda07641e0"",
+                    ""path"": ""<XRController>{RightHand}/secondaryButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -3607,6 +3638,7 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         m_XRIHead_EyeGazeRotation = m_XRIHead.FindAction("Eye Gaze Rotation", throwIfNotFound: true);
         m_XRIHead_EyeGazeIsTracked = m_XRIHead.FindAction("Eye Gaze Is Tracked", throwIfNotFound: true);
         m_XRIHead_EyeGazeTrackingState = m_XRIHead.FindAction("Eye Gaze Tracking State", throwIfNotFound: true);
+        m_XRIHead_Interact = m_XRIHead.FindAction("Interact", throwIfNotFound: true);
         // XRI Left
         m_XRILeft = asset.FindActionMap("XRI Left", throwIfNotFound: true);
         m_XRILeft_Position = m_XRILeft.FindAction("Position", throwIfNotFound: true);
@@ -3810,6 +3842,7 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
     private readonly InputAction m_XRIHead_EyeGazeRotation;
     private readonly InputAction m_XRIHead_EyeGazeIsTracked;
     private readonly InputAction m_XRIHead_EyeGazeTrackingState;
+    private readonly InputAction m_XRIHead_Interact;
     /// <summary>
     /// Provides access to input actions defined in input action map "XRI Head".
     /// </summary>
@@ -3853,6 +3886,10 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         /// Provides access to the underlying input action "XRIHead/EyeGazeTrackingState".
         /// </summary>
         public InputAction @EyeGazeTrackingState => m_Wrapper.m_XRIHead_EyeGazeTrackingState;
+        /// <summary>
+        /// Provides access to the underlying input action "XRIHead/Interact".
+        /// </summary>
+        public InputAction @Interact => m_Wrapper.m_XRIHead_Interact;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -3903,6 +3940,9 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
             @EyeGazeTrackingState.started += instance.OnEyeGazeTrackingState;
             @EyeGazeTrackingState.performed += instance.OnEyeGazeTrackingState;
             @EyeGazeTrackingState.canceled += instance.OnEyeGazeTrackingState;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         /// <summary>
@@ -3938,6 +3978,9 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
             @EyeGazeTrackingState.started -= instance.OnEyeGazeTrackingState;
             @EyeGazeTrackingState.performed -= instance.OnEyeGazeTrackingState;
             @EyeGazeTrackingState.canceled -= instance.OnEyeGazeTrackingState;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         /// <summary>
@@ -5767,6 +5810,13 @@ public partial class @XRIDefaultInputActions: IInputActionCollection2, IDisposab
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnEyeGazeTrackingState(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Interact" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInteract(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "XRI Left" which allows adding and removing callbacks.

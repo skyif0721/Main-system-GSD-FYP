@@ -1,12 +1,14 @@
+using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.AccessControl;
 using UnityEngine;
-using Ink.Runtime;
 
 public class DialogueManager : MonoBehaviour
 {
     [Header("Ink Story")]
     [SerializeField] private TextAsset inkJson;
+    [SerializeField] private GameObject shopUI;
 
     private Story story;
 
@@ -14,15 +16,22 @@ public class DialogueManager : MonoBehaviour
 
     private bool dialoguePlaying = false;
 
-    private void Awake()
+    private void Start()
     {
-
         story = new Story(inkJson.text);
-    }
 
-    private void Update()
-    {
-        ShopManager.coins += 50;
+        if (!shopUI)
+        {
+            Debug.Log("Dialog no shopUI");
+            return;
+        }
+        ;
+        shopUI.GetComponent<ShopPanelUI>();
+
+        story.BindExternalFunction("OpenShop", () => {
+            Debug.Log("openShop");
+            shopUI.GetComponent<ShopPanelUI>().OpenShopPressed();
+        });
     }
 
     private void OnEnable()
@@ -54,6 +63,11 @@ public class DialogueManager : MonoBehaviour
         ContinueOrExitStory();
     }
 
+    public void TalkButtonPressed(string knotName)
+    {
+        EnterDialogue(knotName);
+    }
+
     private void EnterDialogue(string knotName)
     {
         if (dialoguePlaying)
@@ -62,8 +76,6 @@ public class DialogueManager : MonoBehaviour
         }
 
         dialoguePlaying = true;
-
-        GameEventsManager.instance.inputEvents.DisablePlayerMovement();
 
         GameEventsManager.instance.dialogueEvents.DialogueStarted();
 
@@ -83,9 +95,13 @@ public class DialogueManager : MonoBehaviour
 
     private void ContinueOrExitStory()
     {
+
+
         if (story.currentChoices.Count > 0 && currentChoiceIndex != -1)
         {
             story.ChooseChoiceIndex(currentChoiceIndex);
+
+
 
             currentChoiceIndex = -1;
         }
@@ -123,8 +139,6 @@ public class DialogueManager : MonoBehaviour
         GameEventsManager.instance.dialogueEvents.DialogueFinished();
 
         GameEventsManager.instance.inputEvents.ChangeInputEventContext(InputEventContext.DEFAULT);
-
-        GameEventsManager.instance.inputEvents.EnablePlayerMovement();
 
         story.ResetState();
     }
