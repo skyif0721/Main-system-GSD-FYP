@@ -17,6 +17,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/SCENES/final-boss.unity
     guid: f14636e197eb95c4797c892ba40342f8
+  - enabled: 1
+    path: Assets/SCENES/DeathScene.unity
+    guid: f38dcc275dec8064c9cc0106eb543dc0
+  - enabled: 1
+    path: Assets/SCENES/WinScene.unity
+    guid: be649b5c478a8724babb94ec068bc7e4
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: efb7b87eb8ecd9d46b3a0351222f323f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: c348712bda248c246b8c49b3db54643f, type: 3}

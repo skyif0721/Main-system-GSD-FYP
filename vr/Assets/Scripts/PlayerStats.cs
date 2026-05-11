@@ -110,7 +110,24 @@ public class PlayerStats : MonoBehaviour
     void Die()
     {
         Debug.Log("Player Died!");
-        // Handle player death (e.g., reload scene, show game over screen)
+
+        // Play death sound
+        if (GameAudioManager.Instance != null)
+            GameAudioManager.Instance.StopAllBGM();
+
+        // Transition to death scene
+        if (GameLoopManager.Instance != null)
+        {
+            GameLoopManager.Instance.OnPlayerDeath();
+        }
+        else
+        {
+            // Fallback: load death scene directly (build index 4)
+            if (SceneTransitionManager.singleton != null)
+                SceneTransitionManager.singleton.GoToSceneAsync(4);
+            else
+                UnityEngine.SceneManagement.SceneManager.LoadScene(4);
+        }
     }
 
     // ─── Mana ─────────────────────────────────────────────────────────────────

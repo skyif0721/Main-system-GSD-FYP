@@ -490,6 +490,54 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 226729183}
   m_CullTransparentMesh: 1
+--- !u!1 &232592761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 232592763}
+  - component: {fileID: 232592762}
+  m_Layer: 0
+  m_Name: VRPauseMenu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &232592762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232592761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62c5a6db4e44ac547a43eec1bc36b52c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainMenuSceneIndex: 0
+  mainGameSceneIndex: 1
+  tutorialSceneIndex: 2
+  menuDistance: 2
+--- !u!4 &232592763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232592761}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &256391882
 GameObject:
   m_ObjectHideFlags: 0
@@ -2185,6 +2233,56 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -75}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &953493777
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 953493779}
+  - component: {fileID: 953493778}
+  m_Layer: 0
+  m_Name: GameLoopManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &953493778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953493777}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f796808e0e6c3142aa31e04e3a14c9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainMenuScene: 0
+  shopTrainingScene: 1
+  tutorialScene: 2
+  finalBossScene: 3
+  deathScene: 4
+  winScene: 5
+--- !u!4 &953493779
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953493777}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &980420933
 GameObject:
   m_ObjectHideFlags: 0
@@ -3817,6 +3915,67 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -20, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1676734258
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1676734260}
+  - component: {fileID: 1676734259}
+  m_Layer: 0
+  m_Name: GameAudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1676734259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676734258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a7dcb015daee5a4789a46fbd4ac35c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bgmMenu: {fileID: 8300000, guid: 23fc5fd5984d9b84bbcfcd0ac153bdd3, type: 3}
+  bgmShop: {fileID: 8300000, guid: 6109a8f9d62dbc54a8e9ddadf66abd0a, type: 3}
+  bgmExplore: {fileID: 8300000, guid: 395e604ed90e9184996dfc0a4b685275, type: 3}
+  bgmCombat: {fileID: 8300000, guid: f1de88c6e2afec142a79bb3272d9a455, type: 3}
+  bgmBoss: {fileID: 8300000, guid: 67e3755a1160c8b4e8a32a7a51658557, type: 3}
+  sfxButtonClick: {fileID: 8300000, guid: 012b6ed096bc6fc4a915414f266aa1da, type: 3}
+  sfxSwordHit: {fileID: 8300000, guid: 548a143e6f467d64fa9745f2c5a3678c, type: 3}
+  sfxWeaponDrop: {fileID: 8300000, guid: 21a6c494f84eec7458b0d7b75b659719, type: 3}
+  sfxDrink: {fileID: 8300000, guid: 04550093afd49f0409633107ae3ed586, type: 3}
+  sfxPunch: {fileID: 8300000, guid: bf2978c86662c7c45a197b3ae98f99f4, type: 3}
+  sfxFireball: {fileID: 8300000, guid: a4523a3caacb4c24a80d1ac3625b8634, type: 3}
+  sfxMonsterSpawn: {fileID: 8300000, guid: be7db204840b1aa4c9f374cc3d83973d, type: 3}
+  sfxMonsterShout: {fileID: 8300000, guid: 07257acd08d81d742bfdfad2bd2c1012, type: 3}
+  sfxBossShout: {fileID: 8300000, guid: 4c669580c2ffca449b7ab2b3db6d311c, type: 3}
+  bgmVolume: 0.4
+  sfxVolume: 0.8
+  bgmFadeDuration: 1
+--- !u!4 &1676734260
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1676734258}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1687143547
 GameObject:
   m_ObjectHideFlags: 0
@@ -7385,3 +7544,6 @@ SceneRoots:
   - {fileID: 838107453}
   - {fileID: 19669739}
   - {fileID: 1443058104}
+  - {fileID: 953493779}
+  - {fileID: 1676734260}
+  - {fileID: 232592763}

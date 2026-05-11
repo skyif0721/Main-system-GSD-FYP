@@ -49,6 +49,14 @@ public class VRShopZone : MonoBehaviour
                 npcDialogueText.text = "Welcome to my shop! What can I get for you today?";
             }
         }
+
+        // Switch to shop BGM (mute main BGM)
+        if (GameAudioManager.Instance != null)
+            GameAudioManager.Instance.EnableShopBGM();
+
+        // Play button click SFX
+        if (GameAudioManager.Instance != null)
+            GameAudioManager.Instance.PlayButtonClick();
     }
 
     public void CloseShop()
@@ -58,5 +66,9 @@ public class VRShopZone : MonoBehaviour
         
         // Hide NPC Dialogue
         if (npcDialogueCanvas != null) npcDialogueCanvas.SetActive(false);
+
+        // Restore main BGM (disable shop BGM)
+        if (GameAudioManager.Instance != null)
+            GameAudioManager.Instance.DisableShopBGM();
     }
 }

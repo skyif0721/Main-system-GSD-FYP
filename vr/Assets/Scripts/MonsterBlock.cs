@@ -9,6 +9,7 @@ public class MonsterStat : MonoBehaviour
     public float attackRange = 1.5f;
     public float attackCooldown = 1.0f;
     public GameObject targetObject;
+    public bool isBoss;
 
     private NavMeshAgent agent;
     private Transform playerTransform;
@@ -69,6 +70,10 @@ public class MonsterStat : MonoBehaviour
             playerStats.TakeDamage(damageToPlayer);
             Debug.Log("Monster attacked player for " + damageToPlayer + " damage!");
 
+            // Play monster attack SFX
+            if (GameAudioManager.Instance != null)
+                GameAudioManager.Instance.PlayMonsterShout();
+
             // Trigger attack animation if possible
             if (animator != null)
             {
@@ -125,12 +130,28 @@ public class MonsterStat : MonoBehaviour
 
     public GameObject coinPrefab; // Assign in Inspector
 
+    [Tooltip("If true, defeating this monster triggers the win condition (boss).")]
+
+
     private void Die()
     {
+        isDead = true;
+
         if (coinPrefab != null)
         {
             Instantiate(coinPrefab, transform.position, Quaternion.identity);
         }
-        Destroy(targetObject, 1.0f);
+
+        // Notify spawner
+        MonsterSpawner spawner = FindObjectOfType<MonsterSpawner>();
+        if (spawner != null) spawner.MonsterDied();
+
+        // If this is a boss, trigger win condition
+        if (isBoss && GameLoopManager.Instance != null)
+        {
+            GameLoopManager.Instance.OnBossDefeated();
+        }
+
+        Destroy(targetObject, 3.0f);
     }
 }

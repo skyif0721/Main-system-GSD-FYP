@@ -90,6 +90,10 @@ public class HealthPotion : MonoBehaviour
         if (_consumed) return;
         _consumed = true;
 
+        // Play drink SFX
+        if (GameAudioManager.Instance != null)
+            GameAudioManager.Instance.PlayDrink();
+
         Debug.Log("[HealthPotion] Consumed! Healing player to full HP.");
 
         // Heal the player

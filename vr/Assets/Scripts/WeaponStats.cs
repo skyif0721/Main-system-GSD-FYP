@@ -63,6 +63,11 @@ public class WeaponStats : MonoBehaviour
         {
             lastHitTime = Time.time;
             monster.TakeDamage(damage);
+
+            // Play weapon hit SFX
+            if (GameAudioManager.Instance != null)
+                GameAudioManager.Instance.PlaySwordHit();
+
             Debug.Log($"[WeaponStats] {weaponName} hit {target.name} for {damage} dmg. Durability: {currentDurability}/{maxDurability}");
             UseDurability();
         }

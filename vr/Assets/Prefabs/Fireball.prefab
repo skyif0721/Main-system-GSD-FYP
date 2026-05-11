@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2106721787085596999}
   - component: {fileID: 2828007047676253186}
   - component: {fileID: 5975207784736142041}
+  - component: {fileID: 7785578260542329065}
   m_Layer: 0
   m_Name: Fireball
   m_TagString: Untagged
@@ -149,3 +150,19 @@ MonoBehaviour:
   speed: 10
   damage: 50
   lifetime: 5
+--- !u!114 &7785578260542329065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1127525129671901411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf65eec962cbf5d4cb18d7ab29bb3459, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireSize: 0.3
+  particleCount: 30
+  fireColorStart: {r: 1, g: 0.6, b: 0.1, a: 1}
+  fireColorEnd: {r: 1, g: 0.1, b: 0, a: 0.3}
