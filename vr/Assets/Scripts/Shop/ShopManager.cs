@@ -163,6 +163,10 @@ public class ShopManager : MonoBehaviour
     }
 
     public void Update() {
+        if(99999 < coins)
+        {
+            coins = 99999;
+        }
         coinreaching = coins;
     }
 

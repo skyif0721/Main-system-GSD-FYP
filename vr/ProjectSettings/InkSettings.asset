@@ -22,4 +22,3 @@ MonoBehaviour:
   compileTimeout: 30
   printInkLogsInConsoleOnCompile: 0
   suppressStartupWindow: 0
-  automaticallyAddDefineSymbols: 1

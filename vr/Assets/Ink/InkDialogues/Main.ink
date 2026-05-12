@@ -31,7 +31,7 @@ Please save us.
     "I will sell you something if you need."
     ~ sentence -= 1
 }
-    -> npc
+    -> npc2
 + [buy something]
     see what you need
     ~ OpenShop()
