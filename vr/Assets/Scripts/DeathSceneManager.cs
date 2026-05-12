@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 using TMPro;
 using System.Collections;
 
@@ -62,7 +63,8 @@ public class DeathSceneManager : MonoBehaviour
         }
 
         canvasGO.AddComponent<CanvasScaler>();
-        canvasGO.AddComponent<GraphicRaycaster>();
+        // Use TrackedDeviceGraphicRaycaster for VR ray interaction
+        canvasGO.AddComponent<TrackedDeviceGraphicRaycaster>();
         _canvasGroup = canvasGO.AddComponent<CanvasGroup>();
         _canvasGroup.alpha = 0f;
 

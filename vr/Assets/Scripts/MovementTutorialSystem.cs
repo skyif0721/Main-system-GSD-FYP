@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
@@ -176,7 +177,8 @@ public class MovementTutorialSystem : MonoBehaviour
         Canvas btnCanvas = btnCanvasGO.AddComponent<Canvas>();
         btnCanvas.renderMode = RenderMode.WorldSpace;
         btnCanvasGO.AddComponent<CanvasScaler>();
-        btnCanvasGO.AddComponent<GraphicRaycaster>();
+        // Use TrackedDeviceGraphicRaycaster for VR ray interaction
+        btnCanvasGO.AddComponent<TrackedDeviceGraphicRaycaster>();
         RectTransform canvasRT = btnCanvasGO.GetComponent<RectTransform>();
         canvasRT.sizeDelta = new Vector2(600, 120);
         canvasRT.localScale = new Vector3(0.005f, 0.005f, 0.005f);
@@ -227,7 +229,8 @@ public class MovementTutorialSystem : MonoBehaviour
         Canvas navCanvas = navCanvasGO.AddComponent<Canvas>();
         navCanvas.renderMode = RenderMode.WorldSpace;
         navCanvasGO.AddComponent<CanvasScaler>();
-        navCanvasGO.AddComponent<GraphicRaycaster>();
+        // Use TrackedDeviceGraphicRaycaster for VR ray interaction
+        navCanvasGO.AddComponent<TrackedDeviceGraphicRaycaster>();
         RectTransform canvasRT = navCanvasGO.GetComponent<RectTransform>();
         canvasRT.sizeDelta = new Vector2(500, 60);
         canvasRT.localScale = new Vector3(0.005f, 0.005f, 0.005f);

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 using TMPro;
 
 /// <summary>
@@ -84,7 +85,8 @@ public class VRPauseMenu : MonoBehaviour
         canvasRT.localScale = Vector3.one * 0.003f;
 
         _menuCanvas.AddComponent<CanvasScaler>();
-        _menuCanvas.AddComponent<GraphicRaycaster>();
+        // Use TrackedDeviceGraphicRaycaster for VR ray interaction
+        _menuCanvas.AddComponent<TrackedDeviceGraphicRaycaster>();
 
         // Background
         GameObject bgGO = new GameObject("Background");

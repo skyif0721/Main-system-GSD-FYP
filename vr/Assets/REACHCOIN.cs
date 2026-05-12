@@ -12,7 +12,7 @@ public class REACHCOIN : MonoBehaviour
     void Update()
     {
         // Check if the boss exists and if its health has dropped to 0 or less
-        if (bossStats != null && bossStats.coinreaching <= 1000)
+        if (bossStats != null && bossStats.coinreaching >= 1000)
         {
             LoadScene();
         }

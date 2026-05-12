@@ -11,9 +11,34 @@ public class SceneTransitionManager : MonoBehaviour
     private void Awake()
     {
         if (singleton && singleton != this)
-            Destroy(singleton);
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         singleton = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// After each scene load, try to find a FadeScreen in the new scene if we don't have one.
+    /// </summary>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (fadeScreen == null)
+        {
+            fadeScreen = FindObjectOfType<FadeScreen>();
+        }
     }
 
     public void GoToScene(int sceneIndex)
@@ -23,10 +48,16 @@ public class SceneTransitionManager : MonoBehaviour
 
     IEnumerator GoToSceneRoutine(int sceneIndex)
     {
-        fadeScreen.FadeOut();
-        yield return new WaitForSeconds(fadeScreen.fadeDuration);
+        if (fadeScreen != null)
+        {
+            fadeScreen.FadeOut();
+            yield return new WaitForSeconds(fadeScreen.fadeDuration);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
 
-        //Launch the new scene
         SceneManager.LoadScene(sceneIndex);
     }
 
@@ -37,13 +68,20 @@ public class SceneTransitionManager : MonoBehaviour
 
     IEnumerator GoToSceneAsyncRoutine(int sceneIndex)
     {
-        fadeScreen.FadeOut();
-        //Launch the new scene
+        float fadeDuration = 0.5f;
+
+        if (fadeScreen != null)
+        {
+            fadeScreen.FadeOut();
+            fadeDuration = fadeScreen.fadeDuration;
+        }
+
+        // Launch the new scene
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneIndex);
         operation.allowSceneActivation = false;
 
         float timer = 0;
-        while(timer <= fadeScreen.fadeDuration && !operation.isDone)
+        while (timer <= fadeDuration && !operation.isDone)
         {
             timer += Time.deltaTime;
             yield return null;

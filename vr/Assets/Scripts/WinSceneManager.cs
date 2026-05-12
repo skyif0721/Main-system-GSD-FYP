@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
@@ -93,7 +94,8 @@ public class WinSceneManager : MonoBehaviour
         }
 
         canvasGO.AddComponent<CanvasScaler>();
-        canvasGO.AddComponent<GraphicRaycaster>();
+        // Use TrackedDeviceGraphicRaycaster for VR ray interaction
+        canvasGO.AddComponent<TrackedDeviceGraphicRaycaster>();
 
         // Background
         GameObject bgGO = new GameObject("Background");

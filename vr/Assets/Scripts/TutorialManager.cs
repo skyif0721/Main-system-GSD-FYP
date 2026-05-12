@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 using TMPro;
 
 /// <summary>
@@ -289,7 +290,8 @@ public class TutorialManager : MonoBehaviour
         Canvas btnCanvas = btnCanvasGO.AddComponent<Canvas>();
         btnCanvas.renderMode = RenderMode.WorldSpace;
         btnCanvasGO.AddComponent<CanvasScaler>();
-        btnCanvasGO.AddComponent<GraphicRaycaster>();
+        // Use TrackedDeviceGraphicRaycaster for VR ray interaction
+        btnCanvasGO.AddComponent<TrackedDeviceGraphicRaycaster>();
         RectTransform canvasRT = btnCanvasGO.GetComponent<RectTransform>();
         canvasRT.sizeDelta = new Vector2(300, 80);
         canvasRT.localScale = new Vector3(0.005f, 0.005f, 0.005f);
