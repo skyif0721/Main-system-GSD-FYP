@@ -26,7 +26,7 @@ public class CoinPickup : MonoBehaviour
     private XRGrabInteractable grabInteractable;
     
     [Tooltip("How long before the coin despawns (in seconds)")]
-    public float despawnTime = 3f;
+    public float despawnTime = 10f;
     private float timer = 0f;
 
     void Awake()

@@ -13,6 +13,7 @@ public class ShopManager : MonoBehaviour
     public int[,] shopItems = new int[4, 12];
     public string[] shopItemsName = new string[12];
     public static int coins;
+    public int coinreaching;
     public GameObject CoinsTxt;
     public GameObject player;
 
@@ -115,6 +116,10 @@ public class ShopManager : MonoBehaviour
                 digitImages[i].gameObject.SetActive(false);
             }
         }
+    }
+
+    public void Update() {
+        coinreaching = coins;
     }
 
 }

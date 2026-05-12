@@ -152,6 +152,6 @@ public class MonsterStat : MonoBehaviour
             GameLoopManager.Instance.OnBossDefeated();
         }
 
-        Destroy(targetObject, 3.0f);
+        Destroy(targetObject, 2.0f);
     }
 }
