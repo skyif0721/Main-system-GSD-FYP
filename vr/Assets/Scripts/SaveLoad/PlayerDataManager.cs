@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 [System.Serializable]
@@ -10,7 +11,9 @@ public class PlayerData
     public string name;
     public int score;
     public int health;
+    public int mana;
     public int money;
+    public string sceneName;
     public float[] position;
 }
 public class PlayerDataManager : MonoBehaviour
@@ -18,14 +21,16 @@ public class PlayerDataManager : MonoBehaviour
     public GameObject player;
     private string serverURL = "http://localhost:3000";
 
-    public void SaveGame(string id, string name, int score, int health, int money, float[] position)
+    public void SaveGame(string id, string name, int score, int health, int mana, int money, string sceneName, float[] position)
     {
         PlayerData data = new PlayerData();
         data.id = id;
         data.name = name;
         data.score = score;
         data.health = health;
+        data.mana = mana;
         data.money = money;
+        data.sceneName = sceneName;
 
         data.position = new float[3];
         data.position[0] = position[0];
@@ -75,7 +80,10 @@ public class PlayerDataManager : MonoBehaviour
                 Debug.Log("Score: " + loadedData.score);
                 player.GetComponent<PlayerStats>().currentHealth =  loadedData.health;
                 player.GetComponent<PlayerStats>().UpdateHealthUI();
+                player.GetComponent<PlayerStats>().currentMana = loadedData.health;
+                player.GetComponent<PlayerStats>().UpdateManaUI();
                 ShopManager.coins = loadedData.money;
+                SceneManager.LoadScene(loadedData.sceneName);
 
                 Vector3 savedPos = new(
                     loadedData.position[0],
