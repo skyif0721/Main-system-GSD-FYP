@@ -21,6 +21,9 @@ public class ShopManager : MonoBehaviour
     public Sprite[] numberSprites; // Assign 0-9 in order
     public Image[] digitImages;    // Assign UI Image objects in order
 
+    public GameObject potionPrefab;
+    public Transform spawnPoint;
+
     void Start()
     {
         DisplayNumber(coins);
@@ -44,6 +47,31 @@ public class ShopManager : MonoBehaviour
         shopItemsName[2] = "Mana";
         shopItemsName[3] = "Attack";
         shopItemsName[4] = "Sword";
+
+        // Auto-find spawn point
+        if (spawnPoint == null)
+        {
+            GameObject sp = GameObject.Find("WeaponSpawnPoint");
+            if (sp != null) spawnPoint = sp.transform;
+        }
+
+        // Auto-find potion prefab from scene (the green cross 3d model)
+        if (potionPrefab == null)
+        {
+            // Try to load from prefab
+            potionPrefab = UnityEngine.Resources.Load<GameObject>("green cross 3d model");
+            if (potionPrefab == null)
+            {
+                // Try to find in scene as template
+                GameObject scenePotion = GameObject.Find("green cross 3d model");
+                if (scenePotion != null)
+                {
+                    potionPrefab = scenePotion;
+                    // Hide the template
+                    scenePotion.SetActive(false);
+                }
+            }
+        }
     }
 
     void OnEnable()
@@ -95,8 +123,7 @@ public class ShopManager : MonoBehaviour
 
             if (id == 1)
             {
-                player.GetComponent<PlayerStats>().currentHealth += 50;
-                player.GetComponent<PlayerStats>().UpdateHealthUI();
+                SpawnPotion();
             }
 
             if(id == 2)
@@ -168,6 +195,51 @@ public class ShopManager : MonoBehaviour
             coins = 99999;
         }
         coinreaching = coins;
+    }
+
+    void SpawnPotion()
+    {
+        if (potionPrefab == null)
+        {
+            Debug.LogWarning("[PotionShop] No potion prefab assigned!");
+            return;
+        }
+
+        Vector3 pos;
+        Quaternion rot;
+
+        if (spawnPoint != null)
+        {
+            pos = spawnPoint.position;
+            rot = spawnPoint.rotation;
+        }
+        else
+        {
+            Camera cam = Camera.main;
+            if (cam != null)
+            {
+                pos = cam.transform.position + cam.transform.forward * 0.5f + Vector3.down * 0.2f;
+                rot = Quaternion.identity;
+            }
+            else
+            {
+                pos = Vector3.zero + Vector3.up;
+                rot = Quaternion.identity;
+            }
+        }
+
+        GameObject potion = Instantiate(potionPrefab, pos, rot);
+        potion.name = "HealthPotion_Spawned";
+        potion.SetActive(true);
+
+        Rigidbody rb = potion.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        Debug.Log("[PotionShop] Health potion spawned at " + pos);
     }
 
 }
