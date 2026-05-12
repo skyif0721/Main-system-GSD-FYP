@@ -10,6 +10,8 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextAsset inkJson;
     [SerializeField] private GameObject shopUI;
 
+    private ShopPanelUI shopPanelUI;
+
     private Story story;
 
     private int currentChoiceIndex = -1;
@@ -22,39 +24,57 @@ public class DialogueManager : MonoBehaviour
 
         if (!shopUI)
         {
-            Debug.Log("Dialog no shopUI");
-            return;
+            Debug.Log("DialogueManager: shopUI not assigned");
         }
-        ;
-        shopUI.GetComponent<ShopPanelUI>();
-
+        else
+        {
+            shopPanelUI = shopUI.GetComponent<ShopPanelUI>();
+            if(shopPanelUI == null)
+            {
+                Debug.LogWarning("DialogueManager: ShopPanelUI component missing on shopUI");
+            }
+        }
+            
         story.BindExternalFunction("OpenShop", () => {
             Debug.Log("openShop");
-            shopUI.GetComponent<ShopPanelUI>().OpenShopPressed();
+            if (shopPanelUI != null)
+                shopPanelUI.OpenShopPressed();
         });
     }
 
     private void OnEnable()
     {
-        if(GameEventsManager.instance != null)
+        var gem = GameEventsManager.instance;
+        if (gem.dialogueEvents != null)
         {
             GameEventsManager.instance.dialogueEvents.onEnterDialogue += EnterDialogue;
-            GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
             GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
         }
         else
         {
-            Debug.LogWarning("GameEventsManager.instance is null");
+            Debug.LogWarning("GameEventsManager.instance.dialogueEvents is null");
         }
-        
+        if (gem.inputEvents != null)
+        {
+            GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
+        }
+        else
+        {
+            Debug.LogWarning("GameEventsManager.instance.onInteractPressed is null");
+        }
     }
 
     private void OnDisable()
     {
-        if(GameEventsManager.instance != null) {
+        var gem = GameEventsManager.instance;
+        if (gem.dialogueEvents != null)
+        {
             GameEventsManager.instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
-            GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
             GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;
+        }
+        if (gem.inputEvents != null)
+        {
+            GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
         }
     }
 
@@ -82,6 +102,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (dialoguePlaying)
         {
+            Debug.LogWarning("DialogueManager: dialogue playing!");
             return;
         }
 
@@ -91,8 +112,9 @@ public class DialogueManager : MonoBehaviour
 
         GameEventsManager.instance.inputEvents.ChangeInputEventContext(InputEventContext.DIALOGUE);
 
-        if (!knotName.Equals(""))
+        if (!string.IsNullOrEmpty(knotName))
         {
+            Debug.Log($"DialogueManager: ChoosePathString {knotName}");
             story.ChoosePathString(knotName);
         }
         else
@@ -100,18 +122,15 @@ public class DialogueManager : MonoBehaviour
             Debug.LogWarning("Knot name was the empty string when entering dialogue.");
         }
 
+        Debug.Log($"DialogueManager: ContinueOrExitStory");
         ContinueOrExitStory();
     }
 
     private void ContinueOrExitStory()
     {
-
-
         if (story.currentChoices.Count > 0 && currentChoiceIndex != -1)
         {
             story.ChooseChoiceIndex(currentChoiceIndex);
-
-
 
             currentChoiceIndex = -1;
         }

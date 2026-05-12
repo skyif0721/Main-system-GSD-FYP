@@ -17,7 +17,7 @@ public class NPCEvent : MonoBehaviour
 
     bool inDialog = false;
 
-    private bool playerIsNear = false;
+    private bool playerIsNear;
 
     private void Awake()
     {
@@ -29,6 +29,7 @@ public class NPCEvent : MonoBehaviour
     private void Start()
     {
         inDialog = false;
+        playerIsNear = false;
     }
 
     private void OnEnable()
@@ -57,20 +58,27 @@ public class NPCEvent : MonoBehaviour
 
     private void InteractPressed(InputEventContext inputEventContext)
     {
-        if (!playerIsNear || !inputEventContext.Equals(InputEventContext.DEFAULT))
+        if (!playerIsNear)
         {
-            Debug.Log("!playerIsNear");
+            Debug.Log("NPCEvent: !playerIsNear");
+            return;
+        }
+
+        if (!inputEventContext.Equals(InputEventContext.DEFAULT))
+        {
+            Debug.Log("NPCEvent: inputEventContext != DEFAULT)");
             return;
         }
 
         if (!string.IsNullOrEmpty(dialogueKnotName))
         {
             inDialog = true;
+            Debug.Log($"NPCEvent: dialogueKnotNameIs {dialogueKnotName}");
             GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
         }
         else
         {
-            Debug.Log("dialogueKnotNameIsNull");
+            Debug.Log("NPCEvent: dialogueKnotNameIsNull");
             GameEventsManager.instance.inputEvents.InteractPressed();
         }
     }

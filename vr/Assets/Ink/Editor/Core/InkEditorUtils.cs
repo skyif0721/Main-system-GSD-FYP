@@ -29,16 +29,6 @@ namespace Ink.UnityIntegration {
 		const string lastCompileTimeKey = "InkIntegrationLastCompileTime";
 
 		private static Texture2D _inkLogoIcon;
-
-		static InkEditorUtils() {
-			var isFirstLaunch = SessionState.GetBool("InkIsFirstUnityLaunch", true);
-			if (isFirstLaunch) {
-				SessionState.SetBool("InkIsFirstUnityLaunch", false);
-				if(InkSettings.instance.automaticallyAddDefineSymbols)
-					InkDefineSymbols.AddGlobalDefine();
-			}
-		}
-
 		public static Texture2D inkLogoIcon {
 			get {
 				if(_inkLogoIcon == null) {
@@ -280,18 +270,12 @@ namespace Ink.UnityIntegration {
 		/// <param name="path">The path to check.</param>
 		/// <returns>True if it's an ink file, otherwise false.</returns>
 		public static bool IsInkFile(string path) {
-			if (string.IsNullOrEmpty(path)) return false;
 			string extension = Path.GetExtension(path);
 			if (extension == InkEditorUtils.inkFileExtension) {
 				return true;
-			} else if (String.IsNullOrEmpty(extension)) {
-				if (!File.Exists(path)) return false;
-				if (File.GetAttributes(path).HasFlag(FileAttributes.Directory)) return false;
-				// This check exists only in the case of ink files that lack the .ink extension.
-				// We support this mostly for legacy reasons - Inky didn't used to add .ink by default which made a this relatively common issue.
-				// This function needs to be speedy but getting all the ink file paths is a bit slow, so I'd like to remove support for missing extensions in the future.
-				return InkLibrary.instance.inkLibrary.Exists(f => f.filePath == path);
-			} else return false;
+			}
+
+			return String.IsNullOrEmpty(extension) && InkLibrary.instance.inkLibrary.Exists(f => f.filePath == path);
 		}
 
 
@@ -358,7 +342,6 @@ namespace Ink.UnityIntegration {
 
 			return String.Concat(result);
 		}
-
 
 
 		// If this plugin is installed as a package, returns info about it.

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Ink.Runtime
 {
@@ -16,43 +15,32 @@ namespace Ink.Runtime
 
         public StatePatch patch;
 
-        public void StartVariableObservation()
-        {
-            _batchObservingVariableChanges = true;
-            _changedVariablesForBatchObs = new HashSet<string> ();
-        }
-
-        public Dictionary<string, Object> CompleteVariableObservation()
-        {
-            _batchObservingVariableChanges = false;
-
-            var changedVars = new Dictionary<string, Object> ();
-            if (_changedVariablesForBatchObs != null) {
-                foreach (var variableName in _changedVariablesForBatchObs) {
-                    var currentValue = _globalVariables [variableName];
-                    changedVars[variableName] = currentValue;
-                }
+        public bool batchObservingVariableChanges 
+        { 
+            get {
+                return _batchObservingVariableChanges;
             }
+            set { 
+                _batchObservingVariableChanges = value;
+                if (value) {
+                    _changedVariablesForBatchObs = new HashSet<string> ();
+                } 
 
-            // Patch may still be active - e.g. if we were in the middle of a background save
-            if( patch != null ) {
-                foreach(var variableName in patch.changedVariables) {
-                    if( patch.TryGetGlobal(variableName, out Object patchedVal) ) {
-                        changedVars[variableName] = patchedVal;
+                // Finished observing variables in a batch - now send 
+                // notifications for changed variables all in one go.
+                else {
+                    if (_changedVariablesForBatchObs != null) {
+                        foreach (var variableName in _changedVariablesForBatchObs) {
+                            var currentValue = _globalVariables [variableName];
+                            variableChangedEvent (variableName, currentValue);
+                        }
                     }
+
+                    _changedVariablesForBatchObs = null;
                 }
             }
-
-            _changedVariablesForBatchObs = null;
-            return changedVars;
         }
-
-        public void NotifyObservers(Dictionary<string, Object> changedVars)
-        {
-            foreach (var varToVal in changedVars) {
-                variableChangedEvent (varToVal.Key, varToVal.Value);
-            }
-        }
+        bool _batchObservingVariableChanges;
 
         // Allow StoryState to change the current callstack, e.g. for
         // temporary function evaluation.
@@ -179,7 +167,7 @@ namespace Ink.Runtime
                 if(dontSaveDefaultValues) {
                     // Don't write out values that are the same as the default global values
                     Runtime.Object defaultVal;
-                    if (_defaultGlobalVariables != null && _defaultGlobalVariables.TryGetValue(name, out defaultVal))
+                    if (_defaultGlobalVariables.TryGetValue(name, out defaultVal))
                     {
                         if (RuntimeObjectsEqual(val, defaultVal))
                             continue;
@@ -367,7 +355,7 @@ namespace Ink.Runtime
 
             if (variableChangedEvent != null && !value.Equals (oldValue)) {
 
-                if (_batchObservingVariableChanges) {
+                if (batchObservingVariableChanges) {
                     if (patch != null)
                         patch.AddChangedVariable(variableName);
                     else if(_changedVariablesForBatchObs != null)
@@ -424,7 +412,6 @@ namespace Ink.Runtime
         CallStack _callStack;
         HashSet<string> _changedVariablesForBatchObs;
         ListDefinitionsOrigin _listDefsOrigin;
-        bool _batchObservingVariableChanges;
     }
 }
 
