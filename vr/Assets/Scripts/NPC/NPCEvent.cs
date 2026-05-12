@@ -15,7 +15,7 @@ public class NPCEvent : MonoBehaviour
 
     private XRIDefaultInputActions inputActions;
 
-    bool inDialog;
+    bool inDialog = false;
 
     private bool playerIsNear = false;
 
@@ -23,6 +23,11 @@ public class NPCEvent : MonoBehaviour
     {
         inputActions = new XRIDefaultInputActions();
         talkableMark.SetActive(false);
+        inDialog = false;
+    }
+
+    private void Start()
+    {
         inDialog = false;
     }
 

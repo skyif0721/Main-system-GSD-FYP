@@ -127,7 +127,7 @@ public class WinSceneManager : MonoBehaviour
         GameObject subGO = new GameObject("Subtitle");
         subGO.transform.SetParent(canvasGO.transform, false);
         TextMeshProUGUI subText = subGO.AddComponent<TextMeshProUGUI>();
-        subText.text = "You have defeated the Final Boss!\nThe realm is saved!";
+        subText.text = $"You have defeated the Final Boss!\nThe realm is saved!";
         subText.fontSize = 28;
         subText.color = Color.white;
         subText.alignment = TextAlignmentOptions.Center;

@@ -1,84 +1,104 @@
-using GLTFast.Schema;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class HealthHPbar: MonoBehaviour
+public class HealthHPbar : MonoBehaviour
 {
-    public Slider slider;
+    [Header("UI")]
+    [SerializeField] private Slider slider;          // Assign in Inspector if possible
+
+    [Header("Target")]
+    [SerializeField] private GameObject monsterObject;  // Assign in Inspector if possible
+    private MonsterStat monsterStat;
+
     private int health;
-    Text text;
 
-    // Add a reference to your monster GameObject
-    public GameObject monsterObject; // Drag your monster GameObject here in Inspector
-    private MonsterStat MonsterStat; 
-
-
-
-
-    void UpdateHealth()
+    void Awake()
     {
-        // Check if we have a reference to the monster script
-        if (MonsterStat != null)
+        // Fallback: try to find a Slider on this object or its children
+        if (slider == null)
         {
-            health = MonsterStat.health;
-            slider.value = health;
-            // Debug.Log("Health in Timer: " + health);
-        }
-        else
-        {
-            Debug.LogWarning("Monster script not found!");
+            slider = GetComponent<Slider>();
+            if (slider == null)
+                slider = GetComponentInChildren<Slider>(true);
         }
     }
 
     void Start()
     {
-        // Get the Text component from this GameObject
-        text = GetComponent<Text>();
-        MonsterStat = GetComponent<MonsterStat>();
-
-        // Try to find the monster if not assigned
+        // If not assigned, try to find the monster by tag (set your monster¡¦s tag to "Monster")
         if (monsterObject == null)
         {
-            // Look for any GameObject with "Monster" in its name
-            monsterObject = GameObject.Find("Monster"); // Change "Monster" to your monster's name
+            monsterObject = GameObject.FindGameObjectWithTag("Monster");
         }
 
-        // If we found the monster GameObject, get its Monster component
         if (monsterObject != null)
         {
-            if (MonsterStat == null)
+            monsterStat = monsterObject.GetComponent<MonsterStat>();
+            if (monsterStat == null)
             {
-                MonsterStat = monsterObject.GetComponent<MonsterStat>();
-            }
-
-            if (MonsterStat == null)
-            {
-                Debug.LogError("Found monster GameObject but no Monster script attached!");
+                Debug.LogError("MonsterStat component not found on: " + monsterObject.name);
             }
         }
         else
         {
-            Debug.LogError("Could not find monster GameObject!");
+            Debug.LogError("Monster GameObject not assigned or not found!");
         }
 
-        // Initialize health if we have the script
-        if (MonsterStat != null)
+        if (slider == null)
         {
-            UpdateHealth();
-            slider.maxValue = 100;
-            slider.minValue = 0;
+            Debug.LogError("Slider reference is missing on " + name);
         }
+        else
+        {
+            // Initialize slider range (ideally from monsterStat.maxHealth)
+            slider.minValue = 0;
+            slider.maxValue = monsterStat != null && 100 > 0 ? 100 : 100;
+        }
+
+        UpdateHealth();
     }
 
     void Update()
     {
-        // Update health every frame
+        UpdateHealth();
+    }
 
-            UpdateHealth();
-            
+    void UpdateHealth()
+    {
+        if (monsterStat == null)
+        {
+            // Optional: try to recover if monster spawns later
+            if (monsterObject != null)
+                monsterStat = monsterObject.GetComponent<MonsterStat>();
 
+            if (monsterStat == null)
+            {
+                // Avoid spamming every frame if desired
+                // Debug.LogWarning("MonsterStat not available yet.");
+                return;
+            }
+        }
 
+        if (slider == null)
+        {
+            // Attempt late lookup once
+            slider = GetComponent<Slider>() ?? GetComponentInChildren<Slider>(true);
+            if (slider == null)
+            {
+                // Avoid NRE
+                return;
+            }
+        }
+
+        health = monsterStat.health;
+        slider.value = health;
+    }
+
+    // Optional helper to set the target dynamically
+    public void SetTarget(GameObject target)
+    {
+        monsterObject = target;
+        monsterStat = target ? target.GetComponent<MonsterStat>() : null;
+        UpdateHealth();
     }
 }
-

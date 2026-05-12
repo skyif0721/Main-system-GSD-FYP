@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -19,23 +20,30 @@ public class PlayerData
 public class PlayerDataManager : MonoBehaviour
 {
     public GameObject player;
-    private string serverURL = "http://localhost:3000";
 
+    private const string serverURL = "http://localhost:3000";
+
+    private PlayerData _pendingData;
+    public int score { get; private set; }
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
     public void SaveGame(string id, string name, int score, int health, int mana, int money, string sceneName, float[] position)
     {
-        PlayerData data = new PlayerData();
-        data.id = id;
-        data.name = name;
-        data.score = score;
-        data.health = health;
-        data.mana = mana;
-        data.money = money;
-        data.sceneName = sceneName;
+        var data = new PlayerData
+        {
+            id = id,
+            name = name,
+            score = score,
+            health = health,
+            mana = mana,
+            money = money,
+            sceneName = sceneName,
 
-        data.position = new float[3];
-        data.position[0] = position[0];
-        data.position[1] = position[1];
-        data.position[2] = position[2];
+            position = new float[3] { position[0], position[1], position[2] }
+        };
 
         StartCoroutine(SendToServer(data));
     }
@@ -57,7 +65,7 @@ public class PlayerDataManager : MonoBehaviour
                 Debug.Log("SAVED to MongoDB!");
             else
                 Debug.LogError("Save Error: " + request.error);
-        }
+        }   
     }
 
     public void LoadGame(string id)
@@ -77,19 +85,28 @@ public class PlayerDataManager : MonoBehaviour
 
                 Debug.Log("LOADED!");
                 Debug.Log("Name: " + loadedData.name);
-                Debug.Log("Score: " + loadedData.score);
+                score = loadedData.score;
                 player.GetComponent<PlayerStats>().currentHealth =  loadedData.health;
                 player.GetComponent<PlayerStats>().UpdateHealthUI();
                 player.GetComponent<PlayerStats>().currentMana = loadedData.health;
                 player.GetComponent<PlayerStats>().UpdateManaUI();
                 ShopManager.coins = loadedData.money;
-                SceneManager.LoadScene(loadedData.sceneName);
+                if(!string.Equals(loadedData.sceneName, SceneManager.GetActiveScene().name))
+                {
+                    _pendingData = loadedData;
+                    SceneManager.sceneLoaded += OnSceneLoadedApplyData;
+                    SceneManager.LoadScene(loadedData.sceneName);
+                }
+                else
+                {
+                    ApplyLoadedData(loadedData);
+                }
 
-                Vector3 savedPos = new(
-                    loadedData.position[0],
-                    loadedData.position[1],
-                    loadedData.position[2]
-                );
+                    Vector3 savedPos = new(
+                        loadedData.position[0],
+                        loadedData.position[1],
+                        loadedData.position[2]
+                    );
                 player.transform.position = savedPos;
             }
             else
@@ -99,4 +116,46 @@ public class PlayerDataManager : MonoBehaviour
         }
     }
 
+    private void OnSceneLoadedApplyData(Scene scene, LoadSceneMode mode)
+    {
+        SceneManager.sceneLoaded -= OnSceneLoadedApplyData;
+        if (_pendingData != null)
+        {
+            ApplyLoadedData(_pendingData);
+            _pendingData = null;
+        }
+    }
+
+    private void ApplyLoadedData(PlayerData data)
+    {
+        if (player == null)
+        {
+            Player instance = Object.FindAnyObjectByType<Player>();
+            player = instance.gameObject;
+        }
+        
+        if (player == null)
+        {
+            Debug.LogWarning("Player not found in the new scene. Make sure a Player exists or spawn one here.");
+            return;
+        }
+
+        var stats = player.GetComponent<PlayerStats>();
+        if (stats != null)
+        {
+            stats.currentHealth = data.health;
+            stats.UpdateHealthUI();
+
+            stats.currentMana = data.mana;
+            stats.UpdateManaUI();
+        }
+
+        ShopManager.coins = data.money;
+
+        if (data.position != null && data.position.Length >= 3)
+        {
+            Vector3 savedPos = new Vector3(data.position[0], data.position[1], data.position[2]);
+            player.transform.position = savedPos;
+        }
+    }
 }

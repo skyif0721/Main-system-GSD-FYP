@@ -6,6 +6,7 @@ using System.Security.AccessControl;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ShopManager : MonoBehaviour
@@ -43,6 +44,32 @@ public class ShopManager : MonoBehaviour
         shopItemsName[2] = "Mana";
         shopItemsName[3] = "Attack";
         shopItemsName[4] = "Sword";
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (IsUIDisplayReady())
+            DisplayNumber(coins);
+    }
+
+    private bool IsUIDisplayReady()
+    {
+        if (numberSprites == null || numberSprites.Length < 10) return false;
+        if (digitImages == null || digitImages.Length == 0) return false;
+        // Ensure all digits exist
+        for (int i = 0; i < digitImages.Length; i++)
+            if (digitImages[i] == null) return false;
+        return true;
     }
 
     public void Buy()
@@ -105,9 +132,26 @@ public class ShopManager : MonoBehaviour
 
         for (int i = 0; i < digitImages.Length; i++)
         {
+            var img = digitImages[i];
+            if (img == null)
+            {
+                // Skip null entries but let you know
+                Debug.LogWarning($"{name}: digitImages[{i}] is null.");
+                continue;
+            }
+
             if (i < numStr.Length)
             {
                 int digit = numStr[i] - '0';
+
+                var sprite = (digit >= 0 && digit < numberSprites.Length) ? numberSprites[digit] : null;
+                if (sprite == null)
+                {
+                    Debug.LogWarning($"{name}: numberSprites[{digit}] is null.");
+                    img.gameObject.SetActive(false);
+                    continue;
+                }
+
                 digitImages[i].sprite = numberSprites[digit];
                 digitImages[i].gameObject.SetActive(true);
             }

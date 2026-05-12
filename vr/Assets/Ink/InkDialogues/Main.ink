@@ -19,3 +19,23 @@ Hi. I am cap_sure.
 * [nothing]
     -> END
 -->END
+
+===npc2===
+Oh, martial art hero.
+Please save us.
++ [chat]
+    { sentence == 0:
+    "You are our hero!"
+    ~ sentence += 1
+  - else:
+    "I will sell you something if you need."
+    ~ sentence -= 1
+}
+    -> npc
++ [buy something]
+    see what you need
+    ~ OpenShop()
+    -> END
+* [nothing]
+    -> END
+-->END

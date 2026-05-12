@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     {
         this.id = "player_001";
         this.playerName = "PlayerName";
-        this.score = ShopManager.coins / 10;
+        this.score = ShopManager.coins * 10;
         this.health = player.GetComponent<PlayerStats>().currentHealth;
         this.mana = player.GetComponent<PlayerStats>().currentMana;
         this.money = ShopManager.coins;

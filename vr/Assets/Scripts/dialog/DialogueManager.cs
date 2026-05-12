@@ -36,16 +36,26 @@ public class DialogueManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEventsManager.instance.dialogueEvents.onEnterDialogue += EnterDialogue;
-        GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
-        GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
+        if(GameEventsManager.instance != null)
+        {
+            GameEventsManager.instance.dialogueEvents.onEnterDialogue += EnterDialogue;
+            GameEventsManager.instance.inputEvents.onInteractPressed += InteractPressed;
+            GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
+        }
+        else
+        {
+            Debug.LogWarning("GameEventsManager.instance is null");
+        }
+        
     }
 
     private void OnDisable()
     {
-        GameEventsManager.instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
-        GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
-        GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;
+        if(GameEventsManager.instance != null) {
+            GameEventsManager.instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
+            GameEventsManager.instance.inputEvents.onInteractPressed -= InteractPressed;
+            GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;
+        }
     }
 
     private void UpdateChoiceIndex(int choiceIndex)
