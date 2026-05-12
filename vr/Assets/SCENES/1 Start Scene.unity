@@ -3895,11 +3895,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7dcb015daee5a4789a46fbd4ac35c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bgmMenu: {fileID: 8300000, guid: 23fc5fd5984d9b84bbcfcd0ac153bdd3, type: 3}
-  bgmShop: {fileID: 8300000, guid: 6109a8f9d62dbc54a8e9ddadf66abd0a, type: 3}
-  bgmExplore: {fileID: 8300000, guid: 395e604ed90e9184996dfc0a4b685275, type: 3}
-  bgmCombat: {fileID: 8300000, guid: f1de88c6e2afec142a79bb3272d9a455, type: 3}
-  bgmBoss: {fileID: 8300000, guid: 67e3755a1160c8b4e8a32a7a51658557, type: 3}
+  bgmMenu: {fileID: 8300000, guid: 64ad4b7420082a646863fea4429cf4c7, type: 3}
+  bgmShop: {fileID: 8300000, guid: 040f6edab3204d641a959de6bd16433e, type: 3}
+  bgmExplore: {fileID: 8300000, guid: 67e3755a1160c8b4e8a32a7a51658557, type: 3}
+  bgmCombat: {fileID: 8300000, guid: e65df0c418281b14b86c2d1726f27088, type: 3}
+  bgmBoss: {fileID: 8300000, guid: 4e19046c863d5dc439c62d989a2be211, type: 3}
   sfxButtonClick: {fileID: 8300000, guid: 012b6ed096bc6fc4a915414f266aa1da, type: 3}
   sfxSwordHit: {fileID: 8300000, guid: 548a143e6f467d64fa9745f2c5a3678c, type: 3}
   sfxWeaponDrop: {fileID: 8300000, guid: 21a6c494f84eec7458b0d7b75b659719, type: 3}
