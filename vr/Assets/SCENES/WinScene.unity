@@ -652,6 +652,14 @@ PrefabInstance:
       propertyPath: m_InteractorSourceObject
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 576462465405427577, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_StartingGroupMembers.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 576462465405427577, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_StartingInteractionOverridesMap.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1351904833967977961, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_Name
       value: Complete XR Origin Set Up Variant
@@ -699,6 +707,22 @@ PrefabInstance:
     - target: {fileID: 2351764168754611210, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
       propertyPath: m_InteractorSourceObject
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958524496003487954, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_EnableComfortMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3691527760771623796, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6465863287062739579, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_StartingGroupMembers.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6465863287062739579, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
+      propertyPath: m_StartingInteractionOverridesMap.Array.size
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4130435169016847719, guid: 4e660da2419d1614198b2c073ddf863d, type: 3}
