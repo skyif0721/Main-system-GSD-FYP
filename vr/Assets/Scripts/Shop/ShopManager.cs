@@ -242,4 +242,10 @@ public class ShopManager : MonoBehaviour
         Debug.Log("[PotionShop] Health potion spawned at " + pos);
     }
 
+    public void CoinIncrease()
+    {
+        coins += 100;
+        DisplayNumber(coins);
+    }
+
 }

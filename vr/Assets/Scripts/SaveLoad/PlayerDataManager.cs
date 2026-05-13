@@ -21,7 +21,7 @@ public class PlayerDataManager : MonoBehaviour
 {
     public GameObject player;
 
-    private const string serverURL = "http://localhost:3000";
+    private const string serverURL = "https://renderserver-cn6w.onrender.com";
 
     private PlayerData _pendingData;
     public int score { get; private set; }
@@ -73,6 +73,11 @@ public class PlayerDataManager : MonoBehaviour
         StartCoroutine(LoadFromServer(id));
     }
 
+    public void LoadScene(string id)
+    {
+        StartCoroutine(LoadSceneFromServer(id));
+    }
+
     IEnumerator LoadFromServer(string id)
     {
         using (UnityWebRequest request = UnityWebRequest.Get(serverURL + "/api/load/" + id))
@@ -84,14 +89,46 @@ public class PlayerDataManager : MonoBehaviour
                 PlayerData loadedData = JsonUtility.FromJson<PlayerData>(request.downloadHandler.text);
 
                 Debug.Log("LOADED!");
+
                 Debug.Log("Name: " + loadedData.name);
+
                 score = loadedData.score;
+
                 player.GetComponent<PlayerStats>().currentHealth =  loadedData.health;
                 player.GetComponent<PlayerStats>().UpdateHealthUI();
-                player.GetComponent<PlayerStats>().currentMana = loadedData.health;
+
+                player.GetComponent<PlayerStats>().currentMana = loadedData.mana;
                 player.GetComponent<PlayerStats>().UpdateManaUI();
+
                 ShopManager.coins = loadedData.money;
-                if(!string.Equals(loadedData.sceneName, SceneManager.GetActiveScene().name))
+                PlayerPrefs.SetInt("SavedCoins", ShopManager.coins);
+                PlayerPrefs.Save();
+
+                Vector3 savedPos = new(
+                    loadedData.position[0],
+                    loadedData.position[1],
+                    loadedData.position[2]
+                );
+                player.transform.position = savedPos;
+            }
+            else
+            {
+                Debug.LogError("Load Error: " + request.error);
+            }
+        }
+    }
+
+    IEnumerator LoadSceneFromServer(string id)
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(serverURL + "/api/load/" + id))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                PlayerData loadedData = JsonUtility.FromJson<PlayerData>(request.downloadHandler.text);
+
+                if (!string.Equals(loadedData.sceneName, SceneManager.GetActiveScene().name))
                 {
                     _pendingData = loadedData;
                     SceneManager.sceneLoaded += OnSceneLoadedApplyData;
@@ -101,13 +138,6 @@ public class PlayerDataManager : MonoBehaviour
                 {
                     ApplyLoadedData(loadedData);
                 }
-
-                    Vector3 savedPos = new(
-                        loadedData.position[0],
-                        loadedData.position[1],
-                        loadedData.position[2]
-                    );
-                player.transform.position = savedPos;
             }
             else
             {

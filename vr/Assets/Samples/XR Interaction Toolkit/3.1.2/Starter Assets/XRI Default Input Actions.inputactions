@@ -332,19 +332,8 @@
                 },
                 {
                     "name": "",
-                    "id": "342fd6b7-4af9-4ecd-9b14-bf8d091773c5",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Interact",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "50e452df-32fd-4fb9-964f-dcbda07641e0",
-                    "path": "<XRController>{RightHand}/secondaryButton",
+                    "path": "<XRController>{RightHand}/{TriggerButton}",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -355,7 +344,7 @@
                 {
                     "name": "",
                     "id": "c32eaea0-7ff6-49ba-b0ee-2f2a69a642b7",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<XRController>{RightHand}/triggerPressed",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
